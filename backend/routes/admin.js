@@ -20,6 +20,7 @@ router.get('/bookings', isAuthenticated, adminController.viewBookings);
 router.get('/bookings/:id', isAuthenticated, adminController.viewBooking);
 router.put('/bookings/:id/status', isAuthenticated, adminController.updateBookingStatus);
 router.put('/bookings/:id/confirm-payment', isAuthenticated, adminController.confirmPayment);
+router.put('/bookings/:id/confirm-enquiry', isAuthenticated, adminController.confirmEnquiry);
 
 // Export
 router.get('/export', isAuthenticated, adminController.exportBookings);

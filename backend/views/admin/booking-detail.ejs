@@ -91,7 +91,14 @@
             <div class="border-t pt-6">
                 <h3 class="text-lg font-bold text-gray-800 mb-4">Actions</h3>
                 <div class="flex flex-wrap gap-4">
-                    <% if (booking.payment_mode === 'Bank Transfer' && booking.payment_status === 'Pending Payment') { %>
+                    <% if (booking.booking_status === 'Enquiry') { %>
+                    <button onclick="confirmEnquiry('<%= booking._id %>')" 
+                            class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition font-bold">
+                        <i class="fas fa-check-circle mr-2"></i>Confirm Enquiry (Send Email & SMS)
+                    </button>
+                    <% } %>
+                    
+                    <% if (booking.payment_mode === 'Bank Transfer' && booking.payment_status === 'Pending Payment' && booking.booking_status !== 'Enquiry') { %>
                     <button onclick="confirmPayment('<%= booking._id %>')" 
                             class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition">
                         <i class="fas fa-check-circle mr-2"></i>Confirm Payment
@@ -124,6 +131,37 @@
     </div>
 
     <script>
+        async function confirmEnquiry(bookingId) {
+            if (!confirm('Confirm this enquiry?\n\nThis will:\n✓ Change status to Confirmed\n✓ Send confirmation EMAIL instantly\n✓ Send confirmation SMS instantly')) return;
+            
+            const button = event.target;
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
+            
+            try {
+                const response = await fetch(`/admin/bookings/${bookingId}/confirm-enquiry`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    alert('✅ Enquiry Confirmed!\n\n📧 Email: ' + (data.emailSent ? 'Sent ✓' : 'Failed ✗') + 
+                          '\n📱 SMS: ' + (data.smsSent ? 'Sent ✓' : 'Failed ✗') + 
+                          '\n\nConfirmation notifications have been sent to the customer.');
+                    location.reload();
+                } else {
+                    alert('❌ Error: ' + data.error);
+                    button.disabled = false;
+                    button.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Confirm Enquiry (Send Email & SMS)';
+                }
+            } catch (error) {
+                alert('❌ Error confirming enquiry: ' + error.message);
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Confirm Enquiry (Send Email & SMS)';
+            }
+        }
+
         async function confirmPayment(bookingId) {
             if (!confirm('Confirm payment for this booking? This will send confirmation notifications to the customer.')) return;
             

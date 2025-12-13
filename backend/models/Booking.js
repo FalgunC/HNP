@@ -66,8 +66,8 @@ const bookingSchema = new mongoose.Schema({
   booking_status: {
     type: String,
     required: true,
-    enum: ['Confirmed', 'Checked In', 'Checked Out', 'Cancelled'],
-    default: 'Confirmed'
+    enum: ['Enquiry', 'Confirmed', 'Checked In', 'Checked Out', 'Cancelled'],
+    default: 'Enquiry'
   },
   payment_proof: {
     type: String // URL or path to uploaded payment proof

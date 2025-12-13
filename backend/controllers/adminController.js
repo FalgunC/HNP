@@ -72,6 +72,10 @@ const dashboard = async (req, res) => {
       createdAt: { $gte: today }
     });
     
+    const pendingEnquiries = await Booking.countDocuments({
+      booking_status: 'Enquiry'
+    });
+    
     const confirmedBookings = await Booking.countDocuments({
       booking_status: { $in: ['Confirmed', 'Checked In'] }
     });
@@ -116,6 +120,7 @@ const dashboard = async (req, res) => {
       stats: {
         totalBookings,
         todayBookings,
+        pendingEnquiries,
         confirmedBookings,
         totalRevenue
       },
@@ -261,6 +266,59 @@ const confirmPayment = async (req, res) => {
   }
 };
 
+// Confirm enquiry (convert enquiry to confirmed booking)
+const confirmEnquiry = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const booking = await Booking.findById(id);
+    if (!booking) {
+      return res.status(404).json({ error: 'Booking not found' });
+    }
+
+    if (booking.booking_status !== 'Enquiry') {
+      return res.status(400).json({ error: 'This is not an enquiry. Only enquiries can be confirmed.' });
+    }
+
+    // Update booking status to Confirmed
+    booking.booking_status = 'Confirmed';
+    if (booking.payment_mode === 'Pay at Hotel') {
+      booking.payment_status = 'Confirmed';
+    }
+    await booking.save();
+
+    // Populate room details
+    await booking.populate('room_id');
+
+    // Send confirmation notifications instantly
+    console.log('📧 Sending confirmation email to:', booking.email);
+    const emailResult = await sendBookingConfirmation(booking);
+    if (emailResult.success) {
+      console.log('✅ Confirmation email sent successfully');
+    } else {
+      console.error('❌ Confirmation email failed:', emailResult.error);
+    }
+
+    console.log('📱 Sending confirmation SMS to:', booking.phone);
+    const smsResult = await sendBookingConfirmationSMS(booking);
+    if (smsResult.success) {
+      console.log('✅ Confirmation SMS sent successfully');
+    } else {
+      console.error('❌ Confirmation SMS failed:', smsResult.error);
+    }
+
+    res.json({ 
+      success: true, 
+      message: 'Enquiry confirmed! Confirmation email and SMS sent to customer.',
+      emailSent: emailResult.success,
+      smsSent: smsResult.success
+    });
+  } catch (error) {
+    console.error('Confirm enquiry error:', error);
+    res.status(500).json({ error: 'Failed to confirm enquiry: ' + error.message });
+  }
+};
+
 // Export bookings to CSV
 const exportBookings = async (req, res) => {
   try {
@@ -360,6 +418,7 @@ module.exports = {
   viewBooking,
   updateBookingStatus,
   confirmPayment,
+  confirmEnquiry,
   exportBookings
 };
 

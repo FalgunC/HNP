@@ -96,13 +96,21 @@ const sendViaTwilio = async (phone, message) => {
 
 // Send booking confirmation SMS
 const sendBookingConfirmationSMS = async (booking) => {
-  const message = `Dear ${booking.customer_name}, your booking ${booking.booking_id} is confirmed at Hotel Navjeevan Palace. Check-in: ${new Date(booking.check_in).toLocaleDateString('en-IN')}, Amount: ₹${booking.amount}. For queries: 0294-2482909`;
+  const message = `Dear ${booking.customer_name}, your booking ${booking.booking_id} is CONFIRMED at Hotel Navjeevan Palace. Check-in: ${new Date(booking.check_in).toLocaleDateString('en-IN')}, Amount: ₹${booking.amount}. We look forward to welcoming you! For queries: 0294-2482909`;
+  
+  return await sendSMS(booking.phone, message);
+};
+
+// Send enquiry acknowledgment SMS
+const sendEnquiryAcknowledgmentSMS = async (booking) => {
+  const message = `Dear ${booking.customer_name}, thank you for your enquiry ${booking.booking_id} at Hotel Navjeevan Palace. We have received your request and will confirm shortly. Check-in: ${new Date(booking.check_in).toLocaleDateString('en-IN')}, Amount: ₹${booking.amount}. For queries: 0294-2482909`;
   
   return await sendSMS(booking.phone, message);
 };
 
 module.exports = {
   sendSMS,
-  sendBookingConfirmationSMS
+  sendBookingConfirmationSMS,
+  sendEnquiryAcknowledgmentSMS
 };
 

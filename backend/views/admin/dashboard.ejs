@@ -53,6 +53,19 @@
                 </div>
             </div>
 
+            <div class="bg-white rounded-lg shadow p-6 border-2 border-orange-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm">Pending Enquiries</p>
+                        <p class="text-3xl font-bold text-orange-600"><%= stats.pendingEnquiries %></p>
+                        <a href="/admin/bookings?status=Enquiry" class="text-xs text-orange-600 hover:text-orange-800 mt-1 inline-block">View All →</a>
+                    </div>
+                    <div class="bg-orange-100 p-3 rounded-full">
+                        <i class="fas fa-clock text-orange-600 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+
             <div class="bg-white rounded-lg shadow p-6">
                 <div class="flex items-center justify-between">
                     <div>

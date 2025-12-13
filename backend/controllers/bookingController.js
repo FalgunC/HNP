@@ -1,8 +1,8 @@
 const Booking = require('../models/Booking');
 const Room = require('../models/Room');
 const generateBookingId = require('../utils/generateBookingId');
-const { sendBookingConfirmation } = require('../utils/emailService');
-const { sendBookingConfirmationSMS } = require('../utils/smsService');
+const { sendEnquiryAcknowledgment } = require('../utils/emailService');
+const { sendEnquiryAcknowledgmentSMS } = require('../utils/smsService');
 
 // Create new booking
 const createBooking = async (req, res) => {
@@ -42,38 +42,8 @@ const createBooking = async (req, res) => {
       return res.status(400).json({ error: `Maximum ${room.maxGuests} guests allowed for this room type` });
     }
 
-    // Check for overlapping bookings
-    const overlappingBookings = await Booking.find({
-      room_id: room_id,
-      booking_status: { $in: ['Confirmed', 'Checked In'] },
-      $or: [
-        {
-          check_in: { $lte: checkInDate },
-          check_out: { $gt: checkInDate }
-        },
-        {
-          check_in: { $lt: checkOutDate },
-          check_out: { $gte: checkOutDate }
-        },
-        {
-          check_in: { $gte: checkInDate },
-          check_out: { $lte: checkOutDate }
-        }
-      ]
-    });
-
-    if (overlappingBookings.length > 0) {
-      return res.status(400).json({ error: 'Room is not available for the selected dates' });
-    }
-
     // Calculate amount
     const amount = room.price * nights;
-
-    // Determine payment status
-    let paymentStatus = 'Pending Payment';
-    if (payment_mode === 'Pay at Hotel') {
-      paymentStatus = 'Confirmed';
-    }
 
     // Generate unique booking ID
     let bookingId;
@@ -86,7 +56,7 @@ const createBooking = async (req, res) => {
       }
     }
 
-    // Create booking
+    // Create enquiry (not confirmed booking)
     const booking = new Booking({
       booking_id: bookingId,
       customer_name,
@@ -100,8 +70,8 @@ const createBooking = async (req, res) => {
       guests,
       amount,
       payment_mode,
-      payment_status: paymentStatus,
-      booking_status: 'Confirmed'
+      payment_status: 'Pending Payment',
+      booking_status: 'Enquiry'
     });
 
     await booking.save();
@@ -109,13 +79,15 @@ const createBooking = async (req, res) => {
     // Populate room details for response
     await booking.populate('room_id');
 
-    // Send notifications (async, don't wait)
-    sendBookingConfirmation(booking).catch(err => console.error('Email error:', err));
-    sendBookingConfirmationSMS(booking).catch(err => console.error('SMS error:', err));
+    // Send enquiry acknowledgment notifications (async, don't wait)
+    console.log('📧 Sending enquiry acknowledgment email to:', booking.email);
+    sendEnquiryAcknowledgment(booking).catch(err => console.error('Email error:', err));
+    console.log('📱 Sending enquiry acknowledgment SMS to:', booking.phone);
+    sendEnquiryAcknowledgmentSMS(booking).catch(err => console.error('SMS error:', err));
 
     res.status(201).json({
       success: true,
-      message: 'Booking created successfully',
+      message: 'Enquiry submitted successfully. You will receive an acknowledgment email and SMS shortly. Confirmation will be sent after review.',
       booking: {
         booking_id: booking.booking_id,
         customer_name: booking.customer_name,

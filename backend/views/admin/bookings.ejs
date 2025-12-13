@@ -45,6 +45,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">Booking Status</label>
                     <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
                         <option value="">All</option>
+                        <option value="Enquiry" <%= filters.status === 'Enquiry' ? 'selected' : '' %>>Enquiries (Pending)</option>
                         <option value="Confirmed" <%= filters.status === 'Confirmed' ? 'selected' : '' %>>Confirmed</option>
                         <option value="Checked In" <%= filters.status === 'Checked In' ? 'selected' : '' %>>Checked In</option>
                         <option value="Checked Out" <%= filters.status === 'Checked Out' ? 'selected' : '' %>>Checked Out</option>
@@ -111,7 +112,7 @@
                                         'bg-yellow-100 text-yellow-800' %>">
                                     <%= booking.payment_status %>
                                 </span>
-                                <% if (booking.payment_mode === 'Bank Transfer' && booking.payment_status === 'Pending Payment') { %>
+                                <% if (booking.payment_mode === 'Bank Transfer' && booking.payment_status === 'Pending Payment' && booking.booking_status !== 'Enquiry') { %>
                                 <button onclick="confirmPayment('<%= booking._id %>')" 
                                         class="ml-2 text-xs text-blue-600 hover:text-blue-900">
                                     Confirm
@@ -120,12 +121,19 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="px-2 py-1 text-xs rounded-full 
-                                    <%= booking.booking_status === 'Checked In' ? 'bg-green-100 text-green-800' : 
+                                    <%= booking.booking_status === 'Enquiry' ? 'bg-orange-100 text-orange-800 font-bold' :
+                                        booking.booking_status === 'Checked In' ? 'bg-green-100 text-green-800' : 
                                         booking.booking_status === 'Checked Out' ? 'bg-gray-100 text-gray-800' : 
                                         booking.booking_status === 'Cancelled' ? 'bg-red-100 text-red-800' : 
                                         'bg-blue-100 text-blue-800' %>">
-                                    <%= booking.booking_status %>
+                                    <%= booking.booking_status === 'Enquiry' ? '⏳ Enquiry' : booking.booking_status %>
                                 </span>
+                                <% if (booking.booking_status === 'Enquiry') { %>
+                                <button onclick="confirmEnquiry('<%= booking._id %>')" 
+                                        class="ml-2 text-xs bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded font-semibold">
+                                    ✓ Confirm
+                                </button>
+                                <% } %>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm">
                                 <a href="/admin/bookings/<%= booking._id %>" class="text-blue-600 hover:text-blue-900">View</a>

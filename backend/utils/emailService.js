@@ -115,7 +115,125 @@ const sendBookingConfirmation = async (booking) => {
   }
 };
 
+// Send enquiry acknowledgment email
+const sendEnquiryAcknowledgment = async (booking) => {
+  try {
+    const transporter = createTransporter();
+    
+    const mailOptions = {
+      from: process.env.EMAIL_FROM || 'Hotel Navjeevan Palace',
+      to: booking.email,
+      subject: `Enquiry Received - ${booking.booking_id} - Hotel Navjeevan Palace`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%); color: white; padding: 30px; text-align: center; }
+            .content { padding: 30px; background: #f9fafb; }
+            .enquiry-details { background: white; padding: 20px; margin: 20px 0; border-left: 4px solid #D4AF37; border-radius: 5px; }
+            .detail-row { margin: 12px 0; padding: 8px 0; border-bottom: 1px solid #eee; }
+            .detail-row:last-child { border-bottom: none; }
+            .label { font-weight: bold; color: #555; display: inline-block; width: 150px; }
+            .value { color: #333; }
+            .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+            .thank-you { background: #fff3cd; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #D4AF37; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1 style="margin: 0; font-size: 28px;">🏨 Hotel Navjeevan Palace</h1>
+              <p style="margin: 10px 0 0 0; font-size: 16px;">Enquiry Received</p>
+            </div>
+            <div class="content">
+              <p>Dear <strong>${booking.customer_name}</strong>,</p>
+              
+              <div class="thank-you">
+                <p style="margin: 0; font-size: 16px; color: #856404;">
+                  <strong>Thank you for your consideration!</strong> We have received your room enquiry and will confirm your booking shortly.
+                </p>
+              </div>
+              
+              <div class="enquiry-details">
+                <h2 style="margin-top: 0; color: #D4AF37;">Enquiry Details</h2>
+                <div class="detail-row">
+                  <span class="label">Enquiry ID:</span>
+                  <span class="value"><strong>${booking.booking_id}</strong></span>
+                </div>
+                <div class="detail-row">
+                  <span class="label">Room Type:</span>
+                  <span class="value">${booking.room_type}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="label">Check-in:</span>
+                  <span class="value">${new Date(booking.check_in).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="label">Check-out:</span>
+                  <span class="value">${new Date(booking.check_out).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="label">Number of Nights:</span>
+                  <span class="value">${booking.nights}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="label">Guests:</span>
+                  <span class="value">${booking.guests}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="label">Total Amount:</span>
+                  <span class="value"><strong style="color: #D4AF37; font-size: 18px;">₹${booking.amount.toLocaleString('en-IN')}</strong></span>
+                </div>
+                <div class="detail-row">
+                  <span class="label">Payment Mode:</span>
+                  <span class="value">${booking.payment_mode}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="label">Status:</span>
+                  <span class="value" style="color: #856404; font-weight: bold;">⏳ Pending Confirmation</span>
+                </div>
+              </div>
+              
+              <p style="margin-top: 25px; font-size: 15px; line-height: 1.8;">
+                Our team is reviewing your enquiry and will send you a <strong>confirmation email and SMS</strong> shortly. 
+                Please keep this enquiry ID (<strong>${booking.booking_id}</strong>) for your reference.
+              </p>
+              
+              <p style="margin-top: 20px;">
+                For any urgent queries, please contact us at:<br>
+                <strong>Phone:</strong> 0294-2482909 / 7230082909<br>
+                <strong>Email:</strong> navjeevanhoteludr@yahoo.com<br>
+                <strong>Address:</strong> 1, Shivaji Nagar, City Station Road, Udaipur-313001 (Raj.)
+              </p>
+              
+              <p style="margin-top: 25px; color: #666; font-style: italic;">
+                We look forward to welcoming you to Hotel Navjeevan Palace!
+              </p>
+            </div>
+            <div class="footer">
+              <p><strong>Hotel Navjeevan Palace, Udaipur</strong></p>
+              <p>This is an automated email. Please do not reply.</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `
+    };
+    
+    const info = await transporter.sendMail(mailOptions);
+    console.log('✅ Enquiry acknowledgment email sent:', info.messageId);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('❌ Email error:', error);
+    return { success: false, error: error.message };
+  }
+};
+
 module.exports = {
-  sendBookingConfirmation
+  sendBookingConfirmation,
+  sendEnquiryAcknowledgment
 };
 
