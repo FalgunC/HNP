@@ -70,6 +70,7 @@ const seedData = async () => {
         isActive: true
       }
     ];
+    
 
     // Delete old rooms and create new ones with updated data
     await Room.deleteMany({});
