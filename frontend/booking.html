@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Book your stay at Hotel Navjeevan Palace, Udaipur. Choose from Standard, Deluxe, or Family Suite rooms.">
+    <title>Book Your Stay - Hotel Navjeevan Palace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-blue-900 text-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-hotel text-3xl"></i>
+                    <div>
+                        <h1 class="text-xl font-bold">Hotel Navjeevan Palace</h1>
+                        <p class="text-xs text-blue-200">Udaipur, Rajasthan</p>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="index.html" class="hover:text-blue-200 transition">Home</a>
+                    <a href="rooms.html" class="hover:text-blue-200 transition">Rooms & Pricing</a>
+                    <a href="about.html" class="hover:text-blue-200 transition">About Us</a>
+                    <a href="contact.html" class="hover:text-blue-200 transition">Contact</a>
+                    <a href="booking.html" class="bg-blue-700 hover:bg-blue-600 px-4 py-2 rounded transition font-bold">Book Now</a>
+                </div>
+                <button class="md:hidden" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+            <div id="mobileMenu" class="hidden md:hidden pb-4">
+                <a href="index.html" class="block py-2 hover:text-blue-200">Home</a>
+                <a href="rooms.html" class="block py-2 hover:text-blue-200">Rooms & Pricing</a>
+                <a href="about.html" class="block py-2 hover:text-blue-200">About Us</a>
+                <a href="contact.html" class="block py-2 hover:text-blue-200">Contact</a>
+                <a href="booking.html" class="block py-2 bg-blue-700 hover:bg-blue-600 px-4 py-2 rounded mt-2 text-center">Book Now</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Booking Form -->
+    <section class="py-12">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <h1 class="text-4xl font-bold text-center mb-8 text-gray-800">Book Your Stay</h1>
+            
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                <form id="bookingForm" class="space-y-6">
+                    <!-- Room Selection -->
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">Select Room Type *</label>
+                        <select id="roomSelect" name="room_id" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">-- Select Room Type --</option>
+                        </select>
+                        <div id="roomInfo" class="mt-4 p-4 bg-blue-50 rounded-lg hidden">
+                            <p class="font-semibold text-gray-800" id="roomName"></p>
+                            <p class="text-gray-600" id="roomDescription"></p>
+                            <p class="text-lg font-bold text-blue-600 mt-2" id="roomPrice"></p>
+                        </div>
+                    </div>
+
+                    <!-- Dates -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-gray-700 font-bold mb-2">Check-in Date *</label>
+                            <input type="date" id="checkIn" name="check_in" required 
+                                   min="" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-bold mb-2">Check-out Date *</label>
+                            <input type="date" id="checkOut" name="check_out" required 
+                                   min="" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                    </div>
+
+                    <!-- Calculation Display -->
+                    <div id="calculationDisplay" class="hidden p-4 bg-green-50 rounded-lg border border-green-200">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-gray-700"><span id="nightsCount">0</span> Night(s)</p>
+                                <p class="text-sm text-gray-600">₹<span id="pricePerNight">0</span> per night</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm text-gray-600">Total Amount</p>
+                                <p class="text-2xl font-bold text-green-600">₹<span id="totalAmount">0</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Customer Details -->
+                    <div class="border-t pt-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">Customer Details</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-gray-700 font-bold mb-2">Full Name *</label>
+                                <input type="text" name="customer_name" required 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                       placeholder="Enter your full name">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-bold mb-2">Email *</label>
+                                <input type="email" name="email" required 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                       placeholder="your.email@example.com">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-bold mb-2">Phone Number *</label>
+                                <input type="tel" name="phone" required 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                       placeholder="10-digit mobile number">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-bold mb-2">Number of Guests *</label>
+                                <input type="number" name="guests" required min="1" max="4" 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                       placeholder="1-4 guests">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Mode -->
+                    <div class="border-t pt-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">Payment Mode *</h3>
+                        <div class="space-y-3">
+                            <label class="flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition">
+                                <input type="radio" name="payment_mode" value="Pay at Hotel" required class="mr-3">
+                                <div>
+                                    <p class="font-semibold text-gray-800">Pay at Hotel</p>
+                                    <p class="text-sm text-gray-600">Pay when you arrive at the hotel</p>
+                                </div>
+                            </label>
+                            <label class="flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition">
+                                <input type="radio" name="payment_mode" value="Bank Transfer" required class="mr-3">
+                                <div>
+                                    <p class="font-semibold text-gray-800">Online Payment (Bank Transfer)</p>
+                                    <p class="text-sm text-gray-600">Transfer to our bank account. Booking will be confirmed after payment verification.</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Bank Details (shown when Bank Transfer is selected) -->
+                    <div id="bankDetails" class="hidden p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
+                        <h4 class="font-bold text-gray-800 mb-4">Bank Transfer Details</h4>
+                        <div class="space-y-2 text-sm">
+                            <p><span class="font-semibold">Bank Name:</span> <span id="bankName">-</span></p>
+                            <p><span class="font-semibold">Account Name:</span> <span id="accountName">-</span></p>
+                            <p><span class="font-semibold">Account Number:</span> <span id="accountNumber">-</span></p>
+                            <p><span class="font-semibold">IFSC Code:</span> <span id="ifscCode">-</span></p>
+                            <p><span class="font-semibold">UPI ID:</span> <span id="upiId">-</span></p>
+                        </div>
+                        <p class="mt-4 text-sm text-red-600 font-semibold">⚠️ Please complete the payment and share the transaction details for confirmation.</p>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="border-t pt-6">
+                        <button type="submit" id="submitBtn" 
+                                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg text-lg transition">
+                            <i class="fas fa-calendar-check mr-2"></i>Confirm Booking
+                        </button>
+                    </div>
+
+                    <!-- Error/Success Messages -->
+                    <div id="messageDiv" class="hidden"></div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Hotel Navjeevan Palace</h3>
+                    <p class="text-gray-400">A budget-friendly hotel offering comfortable accommodation in the heart of Udaipur, Rajasthan.</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Quick Links</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="index.html" class="hover:text-white transition">Home</a></li>
+                        <li><a href="rooms.html" class="hover:text-white transition">Rooms & Pricing</a></li>
+                        <li><a href="about.html" class="hover:text-white transition">About Us</a></li>
+                        <li><a href="contact.html" class="hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Contact Us</h3>
+                    <p class="text-gray-400 mb-2"><i class="fas fa-phone mr-2"></i>0294-2482909 / 7230082909</p>
+                    <p class="text-gray-400 mb-2"><i class="fas fa-envelope mr-2"></i>navjeevanhoteludr@yahoo.com</p>
+                    <p class="text-gray-400"><i class="fas fa-map-marker-alt mr-2"></i>1, Shivaji Nagar, City Station Road, Udaipur-313001</p>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 Hotel Navjeevan Palace. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="config.js"></script>
+    <script>
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('checkIn').min = today;
+        document.getElementById('checkOut').min = today;
+
+        // Load rooms
+        async function loadRooms() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/rooms`);
+                const data = await response.json();
+                
+                if (data.success && data.rooms) {
+                    const select = document.getElementById('roomSelect');
+                    select.innerHTML = '<option value="">-- Select Room Type --</option>' + 
+                        data.rooms.map(room => 
+                            `<option value="${room._id}" data-price="${room.price}" data-name="${room.type}" data-description="${room.description}" data-max="${room.maxGuests}">${room.type} - ₹${room.price}/night</option>`
+                        ).join('');
+                    
+                    // Check if room ID is in URL
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const roomId = urlParams.get('room');
+                    if (roomId) {
+                        select.value = roomId;
+                        updateRoomInfo();
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading rooms:', error);
+            }
+        }
+
+        // Update room info when selected
+        function updateRoomInfo() {
+            const select = document.getElementById('roomSelect');
+            const option = select.options[select.selectedIndex];
+            const roomInfo = document.getElementById('roomInfo');
+            
+            if (select.value) {
+                roomInfo.classList.remove('hidden');
+                document.getElementById('roomName').textContent = option.dataset.name;
+                document.getElementById('roomDescription').textContent = option.dataset.description;
+                document.getElementById('roomPrice').textContent = `₹${parseInt(option.dataset.price).toLocaleString('en-IN')} per night`;
+            } else {
+                roomInfo.classList.add('hidden');
+            }
+            
+            calculateTotal();
+        }
+
+        // Calculate total amount
+        function calculateTotal() {
+            const checkIn = document.getElementById('checkIn').value;
+            const checkOut = document.getElementById('checkOut').value;
+            const select = document.getElementById('roomSelect');
+            const option = select.options[select.selectedIndex];
+            
+            const calcDisplay = document.getElementById('calculationDisplay');
+            
+            if (checkIn && checkOut && select.value) {
+                const checkInDate = new Date(checkIn);
+                const checkOutDate = new Date(checkOut);
+                
+                if (checkOutDate > checkInDate) {
+                    const nights = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
+                    const pricePerNight = parseInt(option.dataset.price);
+                    const total = nights * pricePerNight;
+                    
+                    document.getElementById('nightsCount').textContent = nights;
+                    document.getElementById('pricePerNight').textContent = pricePerNight.toLocaleString('en-IN');
+                    document.getElementById('totalAmount').textContent = total.toLocaleString('en-IN');
+                    calcDisplay.classList.remove('hidden');
+                } else {
+                    calcDisplay.classList.add('hidden');
+                }
+            } else {
+                calcDisplay.classList.add('hidden');
+            }
+        }
+
+        // Update check-out minimum date when check-in changes
+        document.getElementById('checkIn').addEventListener('change', function() {
+            const checkInDate = this.value;
+            document.getElementById('checkOut').min = checkInDate;
+            calculateTotal();
+        });
+
+        document.getElementById('checkOut').addEventListener('change', calculateTotal);
+        document.getElementById('roomSelect').addEventListener('change', updateRoomInfo);
+
+        // Load bank details
+        let bankDetailsData = null;
+        async function loadBankDetails() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/bank-details`);
+                const data = await response.json();
+                if (data.success) {
+                    bankDetailsData = data.bankDetails;
+                }
+            } catch (error) {
+                console.error('Error loading bank details:', error);
+            }
+        }
+
+        // Show bank details when Bank Transfer is selected
+        document.querySelectorAll('input[name="payment_mode"]').forEach(radio => {
+            radio.addEventListener('change', async function() {
+                const bankDetails = document.getElementById('bankDetails');
+                if (this.value === 'Bank Transfer') {
+                    bankDetails.classList.remove('hidden');
+                    // Load bank details if not already loaded
+                    if (!bankDetailsData) {
+                        await loadBankDetails();
+                    }
+                    if (bankDetailsData) {
+                        document.getElementById('bankName').textContent = bankDetailsData.bankName;
+                        document.getElementById('accountName').textContent = bankDetailsData.accountName;
+                        document.getElementById('accountNumber').textContent = bankDetailsData.accountNumber;
+                        document.getElementById('ifscCode').textContent = bankDetailsData.ifscCode;
+                        document.getElementById('upiId').textContent = bankDetailsData.upiId;
+                    }
+                } else {
+                    bankDetails.classList.add('hidden');
+                }
+            });
+        });
+
+        // Handle form submission
+        document.getElementById('bookingForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const messageDiv = document.getElementById('messageDiv');
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
+            messageDiv.classList.add('hidden');
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/bookings`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Redirect to confirmation page
+                    window.location.href = `confirmation.html?booking_id=${result.booking.booking_id}`;
+                } else {
+                    messageDiv.className = 'p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg';
+                    messageDiv.innerHTML = `<i class="fas fa-exclamation-circle mr-2"></i>${result.error || 'Booking failed. Please try again.'}`;
+                    messageDiv.classList.remove('hidden');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-calendar-check mr-2"></i>Confirm Booking';
+                }
+            } catch (error) {
+                messageDiv.className = 'p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg';
+                messageDiv.innerHTML = `<i class="fas fa-exclamation-circle mr-2"></i>Error: ${error.message}`;
+                messageDiv.classList.remove('hidden');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-calendar-check mr-2"></i>Confirm Booking';
+            }
+        });
+
+        loadRooms();
+        loadBankDetails();
+    </script>
+</body>
+</html>
+

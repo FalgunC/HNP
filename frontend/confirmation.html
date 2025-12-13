@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Booking confirmation - Hotel Navjeevan Palace">
+    <title>Booking Confirmation - Hotel Navjeevan Palace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-blue-900 text-white shadow-lg">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-hotel text-3xl"></i>
+                    <div>
+                        <h1 class="text-xl font-bold">Hotel Navjeevan Palace</h1>
+                        <p class="text-xs text-blue-200">Udaipur, Rajasthan</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <a href="index.html" class="hover:text-blue-200 transition">Home</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Confirmation Section -->
+    <section class="py-12">
+        <div class="container mx-auto px-4 max-w-3xl">
+            <div id="loadingDiv" class="text-center py-12">
+                <i class="fas fa-spinner fa-spin text-4xl text-gray-400"></i>
+                <p class="mt-4 text-gray-600">Loading booking details...</p>
+            </div>
+
+            <div id="confirmationDiv" class="hidden">
+                <div class="bg-white rounded-lg shadow-lg p-8 mb-6">
+                    <div class="text-center mb-8">
+                        <div class="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-check text-4xl text-green-600"></i>
+                        </div>
+                        <h1 class="text-3xl font-bold text-gray-800 mb-2">Booking Confirmed!</h1>
+                        <p class="text-gray-600">Thank you for choosing Hotel Navjeevan Palace</p>
+                    </div>
+
+                    <div class="bg-blue-50 p-6 rounded-lg mb-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">Booking Details</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-sm text-gray-600">Booking ID</p>
+                                <p class="font-bold text-lg" id="bookingId">-</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Customer Name</p>
+                                <p class="font-bold" id="customerName">-</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Email</p>
+                                <p class="font-bold" id="email">-</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Phone</p>
+                                <p class="font-bold" id="phone">-</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Room Type</p>
+                                <p class="font-bold" id="roomType">-</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Guests</p>
+                                <p class="font-bold" id="guests">-</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Check-in</p>
+                                <p class="font-bold" id="checkIn">-</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Check-out</p>
+                                <p class="font-bold" id="checkOut">-</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Number of Nights</p>
+                                <p class="font-bold" id="nights">-</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Total Amount</p>
+                                <p class="font-bold text-green-600 text-xl" id="amount">-</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Payment Mode</p>
+                                <p class="font-bold" id="paymentMode">-</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Payment Status</p>
+                                <p class="font-bold" id="paymentStatus">-</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="bankDetailsSection" class="hidden bg-yellow-50 border border-yellow-200 p-6 rounded-lg mb-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">Bank Transfer Details</h3>
+                        <div class="space-y-2 text-sm">
+                            <p><span class="font-semibold">Bank Name:</span> <span id="bankName">-</span></p>
+                            <p><span class="font-semibold">Account Name:</span> <span id="accountName">-</span></p>
+                            <p><span class="font-semibold">Account Number:</span> <span id="accountNumber">-</span></p>
+                            <p><span class="font-semibold">IFSC Code:</span> <span id="ifscCode">-</span></p>
+                            <p><span class="font-semibold">UPI ID:</span> <span id="upiId">-</span></p>
+                        </div>
+                        <p class="mt-4 text-sm text-red-600 font-semibold">⚠️ Please complete the payment and share the transaction details for confirmation.</p>
+                    </div>
+
+                    <div class="bg-gray-50 p-6 rounded-lg mb-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">Important Information</h3>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Confirmation email and SMS have been sent to your registered contact details.</li>
+                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Please arrive at the hotel on your check-in date.</li>
+                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i>For any queries, contact us at 0294-2482909 or 7230082909.</li>
+                            <li id="paymentNote" class="hidden"><i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>Your booking will be confirmed after payment verification.</li>
+                        </ul>
+                    </div>
+
+                    <div class="text-center">
+                        <a href="index.html" class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition">
+                            <i class="fas fa-home mr-2"></i>Back to Home
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div id="errorDiv" class="hidden bg-red-50 border border-red-200 rounded-lg p-8 text-center">
+                <i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-4"></i>
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Booking Not Found</h2>
+                <p class="text-gray-600 mb-6">The booking ID you're looking for doesn't exist.</p>
+                <a href="booking.html" class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition">
+                    Make a New Booking
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Hotel Navjeevan Palace</h3>
+                    <p class="text-gray-400">A budget-friendly hotel offering comfortable accommodation in the heart of Udaipur, Rajasthan.</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Contact Us</h3>
+                    <p class="text-gray-400 mb-2"><i class="fas fa-phone mr-2"></i>0294-2482909 / 7230082909</p>
+                    <p class="text-gray-400 mb-2"><i class="fas fa-envelope mr-2"></i>navjeevanhoteludr@yahoo.com</p>
+                    <p class="text-gray-400"><i class="fas fa-map-marker-alt mr-2"></i>1, Shivaji Nagar, City Station Road, Udaipur-313001</p>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 Hotel Navjeevan Palace. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="config.js"></script>
+    <script>
+        async function loadBookingDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const bookingId = urlParams.get('booking_id');
+            
+            if (!bookingId) {
+                document.getElementById('loadingDiv').classList.add('hidden');
+                document.getElementById('errorDiv').classList.remove('hidden');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/bookings/${bookingId}`);
+                const data = await response.json();
+                
+                if (data.success && data.booking) {
+                    const booking = data.booking;
+                    
+                    document.getElementById('bookingId').textContent = booking.booking_id;
+                    document.getElementById('customerName').textContent = booking.customer_name;
+                    document.getElementById('email').textContent = booking.email;
+                    document.getElementById('phone').textContent = booking.phone;
+                    document.getElementById('roomType').textContent = booking.room_type;
+                    document.getElementById('guests').textContent = booking.guests;
+                    document.getElementById('checkIn').textContent = new Date(booking.check_in).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                    document.getElementById('checkOut').textContent = new Date(booking.check_out).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                    document.getElementById('nights').textContent = booking.nights;
+                    document.getElementById('amount').textContent = `₹${booking.amount.toLocaleString('en-IN')}`;
+                    document.getElementById('paymentMode').textContent = booking.payment_mode;
+                    document.getElementById('paymentStatus').textContent = booking.payment_status;
+                    
+                    if (booking.payment_mode === 'Bank Transfer' && booking.payment_status === 'Pending Payment') {
+                        document.getElementById('bankDetailsSection').classList.remove('hidden');
+                        document.getElementById('paymentNote').classList.remove('hidden');
+                        // Load bank details from API
+                        fetch(`${API_BASE_URL}/bank-details`)
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success && data.bankDetails) {
+                                    document.getElementById('bankName').textContent = data.bankDetails.bankName;
+                                    document.getElementById('accountName').textContent = data.bankDetails.accountName;
+                                    document.getElementById('accountNumber').textContent = data.bankDetails.accountNumber;
+                                    document.getElementById('ifscCode').textContent = data.bankDetails.ifscCode;
+                                    document.getElementById('upiId').textContent = data.bankDetails.upiId;
+                                }
+                            })
+                            .catch(err => console.error('Error loading bank details:', err));
+                    }
+                    
+                    document.getElementById('loadingDiv').classList.add('hidden');
+                    document.getElementById('confirmationDiv').classList.remove('hidden');
+                } else {
+                    document.getElementById('loadingDiv').classList.add('hidden');
+                    document.getElementById('errorDiv').classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Error loading booking:', error);
+                document.getElementById('loadingDiv').classList.add('hidden');
+                document.getElementById('errorDiv').classList.remove('hidden');
+            }
+        }
+
+        loadBookingDetails();
+    </script>
+</body>
+</html>
+

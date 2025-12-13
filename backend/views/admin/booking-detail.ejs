@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Details - Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-blue-900 text-white shadow-lg">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                    <i class="fas fa-hotel text-2xl"></i>
+                    <h1 class="text-xl font-bold">Hotel Navjeevan Palace - Admin</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/admin/bookings" class="bg-blue-700 hover:bg-blue-600 px-4 py-2 rounded transition">All Bookings</a>
+                    <a href="/admin/dashboard" class="bg-blue-700 hover:bg-blue-600 px-4 py-2 rounded transition">Dashboard</a>
+                    <a href="/admin/logout" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded transition">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-6">
+        <div class="mb-6">
+            <a href="/admin/bookings" class="text-blue-600 hover:text-blue-900">
+                <i class="fas fa-arrow-left mr-2"></i>Back to Bookings
+            </a>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-lg p-8">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-800">Booking Details</h2>
+                    <p class="text-gray-600 mt-2">Booking ID: <span class="font-mono font-bold"><%= booking.booking_id %></span></p>
+                </div>
+                <div class="text-right">
+                    <span class="px-4 py-2 rounded-full text-sm font-medium
+                        <%= booking.payment_status === 'Paid' ? 'bg-green-100 text-green-800' : 
+                            booking.payment_status === 'Confirmed' ? 'bg-blue-100 text-blue-800' : 
+                            'bg-yellow-100 text-yellow-800' %>">
+                        <%= booking.payment_status %>
+                    </span>
+                    <br class="my-2">
+                    <span class="px-4 py-2 rounded-full text-sm font-medium
+                        <%= booking.booking_status === 'Checked In' ? 'bg-green-100 text-green-800' : 
+                            booking.booking_status === 'Checked Out' ? 'bg-gray-100 text-gray-800' : 
+                            booking.booking_status === 'Cancelled' ? 'bg-red-100 text-red-800' : 
+                            'bg-blue-100 text-blue-800' %>">
+                        <%= booking.booking_status %>
+                    </span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="bg-gray-50 p-6 rounded-lg">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Customer Information</h3>
+                    <div class="space-y-2">
+                        <p><span class="font-semibold">Name:</span> <%= booking.customer_name %></p>
+                        <p><span class="font-semibold">Email:</span> <%= booking.email %></p>
+                        <p><span class="font-semibold">Phone:</span> <%= booking.phone %></p>
+                        <p><span class="font-semibold">Guests:</span> <%= booking.guests %></p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-6 rounded-lg">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Booking Information</h3>
+                    <div class="space-y-2">
+                        <p><span class="font-semibold">Room Type:</span> <%= booking.room_type %></p>
+                        <p><span class="font-semibold">Check-in:</span> <%= new Date(booking.check_in).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %></p>
+                        <p><span class="font-semibold">Check-out:</span> <%= new Date(booking.check_out).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %></p>
+                        <p><span class="font-semibold">Nights:</span> <%= booking.nights %></p>
+                        <p><span class="font-semibold">Total Amount:</span> <span class="text-xl font-bold text-green-600">₹<%= booking.amount.toLocaleString('en-IN') %></span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 p-6 rounded-lg mb-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">Payment Information</h3>
+                <div class="space-y-2">
+                    <p><span class="font-semibold">Payment Mode:</span> <%= booking.payment_mode %></p>
+                    <p><span class="font-semibold">Payment Status:</span> <%= booking.payment_status %></p>
+                    <p><span class="font-semibold">Booking Date:</span> <%= new Date(booking.createdAt).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) %></p>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="border-t pt-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">Actions</h3>
+                <div class="flex flex-wrap gap-4">
+                    <% if (booking.payment_mode === 'Bank Transfer' && booking.payment_status === 'Pending Payment') { %>
+                    <button onclick="confirmPayment('<%= booking._id %>')" 
+                            class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition">
+                        <i class="fas fa-check-circle mr-2"></i>Confirm Payment
+                    </button>
+                    <% } %>
+                    
+                    <% if (booking.booking_status === 'Confirmed') { %>
+                    <button onclick="updateStatus('<%= booking._id %>', 'Checked In')" 
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Mark Check-in
+                    </button>
+                    <% } %>
+                    
+                    <% if (booking.booking_status === 'Checked In') { %>
+                    <button onclick="updateStatus('<%= booking._id %>', 'Checked Out')" 
+                            class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg transition">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Mark Check-out
+                    </button>
+                    <% } %>
+                    
+                    <% if (booking.booking_status !== 'Cancelled' && booking.booking_status !== 'Checked Out') { %>
+                    <button onclick="updateStatus('<%= booking._id %>', 'Cancelled')" 
+                            class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition">
+                        <i class="fas fa-times-circle mr-2"></i>Cancel Booking
+                    </button>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function confirmPayment(bookingId) {
+            if (!confirm('Confirm payment for this booking? This will send confirmation notifications to the customer.')) return;
+            
+            try {
+                const response = await fetch(`/admin/bookings/${bookingId}/confirm-payment`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    alert('Payment confirmed! Notifications sent to customer.');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('Error confirming payment');
+            }
+        }
+
+        async function updateStatus(bookingId, status) {
+            if (!confirm(`Update booking status to "${status}"?`)) return;
+            
+            try {
+                const response = await fetch(`/admin/bookings/${bookingId}/status`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ booking_status: status })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    alert('Booking status updated!');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('Error updating status');
+            }
+        }
+    </script>
+</body>
+</html>
+

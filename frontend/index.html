@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Hotel Navjeevan Palace - Budget-friendly hotel in Udaipur, Rajasthan. Comfortable rooms, family stay options, and easy access to major tourist attractions.">
+    <meta name="keywords" content="Hotel Navjeevan Palace, Udaipur hotel, budget hotel Udaipur, hotel near railway station Udaipur, affordable hotel Udaipur">
+    <meta name="author" content="Hotel Navjeevan Palace">
+    <meta property="og:title" content="Hotel Navjeevan Palace - Budget Hotel in Udaipur">
+    <meta property="og:description" content="Comfortable budget-friendly hotel in Udaipur offering Standard, Deluxe, and Family Suite rooms.">
+    <meta property="og:type" content="website">
+    <title>Hotel Navjeevan Palace - Budget Hotel in Udaipur, Rajasthan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .hero-bg {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%231e40af" width="1200" height="600"/></svg>');
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-blue-900 text-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-hotel text-3xl"></i>
+                    <div>
+                        <h1 class="text-xl font-bold">Hotel Navjeevan Palace</h1>
+                        <p class="text-xs text-blue-200">Udaipur, Rajasthan</p>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="index.html" class="hover:text-blue-200 transition">Home</a>
+                    <a href="rooms.html" class="hover:text-blue-200 transition">Rooms & Pricing</a>
+                    <a href="about.html" class="hover:text-blue-200 transition">About Us</a>
+                    <a href="contact.html" class="hover:text-blue-200 transition">Contact</a>
+                    <a href="booking.html" class="bg-blue-700 hover:bg-blue-600 px-4 py-2 rounded transition">Book Now</a>
+                </div>
+                <button class="md:hidden" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+            <!-- Mobile Menu -->
+            <div id="mobileMenu" class="hidden md:hidden pb-4">
+                <a href="index.html" class="block py-2 hover:text-blue-200">Home</a>
+                <a href="rooms.html" class="block py-2 hover:text-blue-200">Rooms & Pricing</a>
+                <a href="about.html" class="block py-2 hover:text-blue-200">About Us</a>
+                <a href="contact.html" class="block py-2 hover:text-blue-200">Contact</a>
+                <a href="booking.html" class="block py-2 bg-blue-700 hover:bg-blue-600 px-4 py-2 rounded mt-2 text-center">Book Now</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-bg text-white py-20">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-5xl font-bold mb-4">Welcome to Hotel Navjeevan Palace</h2>
+            <p class="text-xl mb-8">Your Comfortable Stay in the Heart of Udaipur</p>
+            <a href="booking.html" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition inline-block">
+                Book Your Room Now
+            </a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Why Choose Us</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center p-6">
+                    <div class="bg-blue-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-map-marker-alt text-3xl text-blue-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 text-gray-800">Prime Location</h3>
+                    <p class="text-gray-600">Located on City Station Road, just minutes away from Udaipur Railway Station and major tourist attractions.</p>
+                </div>
+                <div class="text-center p-6">
+                    <div class="bg-blue-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-rupee-sign text-3xl text-blue-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 text-gray-800">Budget-Friendly</h3>
+                    <p class="text-gray-600">Affordable rates starting from ₹999 per night. Perfect for families, solo travelers, and groups.</p>
+                </div>
+                <div class="text-center p-6">
+                    <div class="bg-blue-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-concierge-bell text-3xl text-blue-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 text-gray-800">Comfortable Stay</h3>
+                    <p class="text-gray-600">Clean, well-maintained rooms with modern amenities including AC, TV, WiFi, and 24/7 hot water.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Room Types Preview -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Our Rooms</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8" id="roomsPreview">
+                <!-- Rooms will be loaded dynamically -->
+            </div>
+            <div class="text-center mt-8">
+                <a href="rooms.html" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition inline-block">
+                    View All Rooms & Pricing
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Info Section -->
+    <section class="py-16 bg-blue-900 text-white">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div>
+                    <i class="fas fa-phone text-4xl mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Phone</h3>
+                    <p>0294-2482909</p>
+                    <p>7230082909</p>
+                </div>
+                <div>
+                    <i class="fas fa-envelope text-4xl mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Email</h3>
+                    <p>navjeevanhoteludr@yahoo.com</p>
+                </div>
+                <div>
+                    <i class="fas fa-map-marker-alt text-4xl mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Address</h3>
+                    <p>1, Shivaji Nagar, City Station Road<br>Udaipur-313001 (Raj.)</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Hotel Navjeevan Palace</h3>
+                    <p class="text-gray-400">A budget-friendly hotel offering comfortable accommodation in the heart of Udaipur, Rajasthan.</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Quick Links</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="index.html" class="hover:text-white transition">Home</a></li>
+                        <li><a href="rooms.html" class="hover:text-white transition">Rooms & Pricing</a></li>
+                        <li><a href="about.html" class="hover:text-white transition">About Us</a></li>
+                        <li><a href="contact.html" class="hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Contact Us</h3>
+                    <p class="text-gray-400 mb-2"><i class="fas fa-phone mr-2"></i>0294-2482909 / 7230082909</p>
+                    <p class="text-gray-400 mb-2"><i class="fas fa-envelope mr-2"></i>navjeevanhoteludr@yahoo.com</p>
+                    <p class="text-gray-400"><i class="fas fa-map-marker-alt mr-2"></i>1, Shivaji Nagar, City Station Road, Udaipur-313001</p>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 Hotel Navjeevan Palace. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="config.js"></script>
+    <script>
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Load rooms preview
+        async function loadRoomsPreview() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/rooms`);
+                const data = await response.json();
+                
+                if (data.success && data.rooms) {
+                    const container = document.getElementById('roomsPreview');
+                    container.innerHTML = data.rooms.slice(0, 3).map(room => `
+                        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                            <div class="bg-blue-600 text-white p-4">
+                                <h3 class="text-xl font-bold">${room.type}</h3>
+                                <p class="text-2xl font-bold mt-2">₹${room.price.toLocaleString('en-IN')} <span class="text-sm font-normal">/night</span></p>
+                            </div>
+                            <div class="p-6">
+                                <p class="text-gray-600 mb-4">${room.description}</p>
+                                <ul class="text-sm text-gray-600 mb-4">
+                                    ${room.amenities.slice(0, 4).map(amenity => `<li class="mb-1"><i class="fas fa-check text-green-500 mr-2"></i>${amenity}</li>`).join('')}
+                                </ul>
+                                <a href="booking.html?room=${room._id}" class="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center py-2 rounded transition">
+                                    Book Now
+                                </a>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading rooms:', error);
+            }
+        }
+
+        loadRoomsPreview();
+    </script>
+</body>
+</html>
+
