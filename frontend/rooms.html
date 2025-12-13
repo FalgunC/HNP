@@ -8,25 +8,28 @@
     <title>Rooms & Pricing - Hotel Navjeevan Palace, Udaipur</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bg-gray-50">
+<body class="bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50" style="background: linear-gradient(135deg, #FFFEF7 0%, #F5F5DC 100%);">
     <!-- Navigation -->
-    <nav class="bg-blue-900 text-white shadow-lg sticky top-0 z-50">
+    <nav class="nav-premium text-white sticky top-0 z-50 backdrop-blur-sm">
         <div class="container mx-auto px-4">
             <div class="flex justify-between items-center py-4">
                 <div class="flex items-center space-x-3">
-                    <i class="fas fa-hotel text-3xl"></i>
+                    <div class="feature-icon-premium">
+                        <i class="fas fa-hotel"></i>
+                    </div>
                     <div>
-                        <h1 class="text-xl font-bold">Hotel Navjeevan Palace</h1>
-                        <p class="text-xs text-blue-200">Udaipur, Rajasthan</p>
+                        <h1 class="text-xl font-bold text-gold">Hotel Navjeevan Palace</h1>
+                        <p class="text-xs" style="color: #D4AF37;">Udaipur, Rajasthan</p>
                     </div>
                 </div>
                 <div class="hidden md:flex items-center space-x-6">
-                    <a href="index.html" class="hover:text-blue-200 transition">Home</a>
-                    <a href="rooms.html" class="hover:text-blue-200 transition font-bold">Rooms & Pricing</a>
-                    <a href="about.html" class="hover:text-blue-200 transition">About Us</a>
-                    <a href="contact.html" class="hover:text-blue-200 transition">Contact</a>
-                    <a href="booking.html" class="bg-blue-700 hover:bg-blue-600 px-4 py-2 rounded transition">Book Now</a>
+                    <a href="index.html" class="hover:text-gold transition duration-300 font-medium">Home</a>
+                    <a href="rooms.html" class="hover:text-gold transition duration-300 font-medium text-gold">Rooms & Pricing</a>
+                    <a href="about.html" class="hover:text-gold transition duration-300 font-medium">About Us</a>
+                    <a href="contact.html" class="hover:text-gold transition duration-300 font-medium">Contact</a>
+                    <a href="booking.html" class="btn-premium">Book Now</a>
                 </div>
                 <button class="md:hidden" onclick="toggleMobileMenu()">
                     <i class="fas fa-bars text-2xl"></i>
@@ -43,21 +46,26 @@
     </nav>
 
     <!-- Page Header -->
-    <section class="bg-blue-900 text-white py-12">
-        <div class="container mx-auto px-4 text-center">
-            <h1 class="text-4xl font-bold mb-4">Rooms & Pricing</h1>
-            <p class="text-xl">Choose the perfect room for your stay in Udaipur</p>
+    <section class="py-20 relative" style="background: linear-gradient(135deg, #1a1a2e 0%, #2C2C2C 100%);">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute inset-0" style="background-image: radial-gradient(circle at 2px 2px, #D4AF37 1px, transparent 0); background-size: 40px 40px;"></div>
+        </div>
+        <div class="container mx-auto px-4 text-center relative z-10">
+            <span class="badge-premium mb-4 inline-block">Accommodation</span>
+            <h1 class="text-5xl md:text-6xl font-bold mb-4 text-white">Rooms & <span class="text-gold">Pricing</span></h1>
+            <p class="text-xl text-gray-300">Choose the perfect room for your stay in Udaipur</p>
+            <div class="divider-gold max-w-32 mx-auto mt-6"></div>
         </div>
     </section>
 
     <!-- Rooms Section -->
-    <section class="py-16">
-        <div class="container mx-auto px-4">
-            <div id="roomsContainer" class="space-y-8">
+    <section class="section-premium py-20 relative">
+        <div class="container mx-auto px-4 relative z-10">
+            <div id="roomsContainer" class="space-y-10">
                 <!-- Rooms will be loaded dynamically -->
-                <div class="text-center">
-                    <i class="fas fa-spinner fa-spin text-4xl text-gray-400"></i>
-                    <p class="mt-4 text-gray-600">Loading rooms...</p>
+                <div class="text-center py-20">
+                    <div class="loading-premium mx-auto mb-4"></div>
+                    <p class="text-gray-600 text-lg">Loading rooms...</p>
                 </div>
             </div>
         </div>
@@ -107,33 +115,52 @@
                 
                 if (data.success && data.rooms) {
                     const container = document.getElementById('roomsContainer');
-                    container.innerHTML = data.rooms.map(room => `
-                        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    container.innerHTML = data.rooms.map(room => {
+                        const imageUrl = room.images && room.images.length > 0 
+                            ? (room.images[0].startsWith('http') ? room.images[0] : `https://hnp.onrender.com${room.images[0]}`)
+                            : 'https://via.placeholder.com/600x400?text=' + encodeURIComponent(room.type);
+                        
+                        return `
+                        <div class="room-card-premium fade-in-up">
                             <div class="md:flex">
-                                <div class="md:w-1/3 bg-blue-600 text-white p-8 flex flex-col justify-center">
-                                    <h2 class="text-3xl font-bold mb-4">${room.type}</h2>
-                                    <p class="text-4xl font-bold mb-2">₹${room.price.toLocaleString('en-IN')}</p>
-                                    <p class="text-blue-200">per night</p>
-                                    <p class="mt-4 text-sm">Max Guests: ${room.maxGuests}</p>
+                                ${room.images && room.images.length > 0 ? `
+                                <div class="md:w-2/5 relative overflow-hidden">
+                                    <img src="${imageUrl}" alt="${room.type}" class="w-full h-80 md:h-full object-cover transition-transform duration-700 hover:scale-110" onerror="this.src='https://via.placeholder.com/600x400?text=' + encodeURIComponent('${room.type}')">
+                                    <div class="absolute top-4 left-4">
+                                        <span class="badge-premium">Featured</span>
+                                    </div>
                                 </div>
-                                <div class="md:w-2/3 p-8">
-                                    <p class="text-gray-700 mb-6 text-lg">${room.description}</p>
-                                    <h3 class="text-xl font-bold mb-4 text-gray-800">Amenities</h3>
+                                ` : ''}
+                                <div class="${room.images && room.images.length > 0 ? 'md:w-1/3' : 'md:w-1/3'} p-8 flex flex-col justify-center relative" style="background: linear-gradient(135deg, #1a1a2e 0%, #2C2C2C 100%);">
+                                    <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-gold to-transparent" style="background: linear-gradient(90deg, transparent, #D4AF37, transparent);"></div>
+                                    <h2 class="text-3xl font-bold mb-4 text-gold">${room.type}</h2>
+                                    <div class="price-premium text-white mb-2">₹${room.price.toLocaleString('en-IN')}</div>
+                                    <p class="text-gray-300 mb-4">per night</p>
+                                    <div class="mt-4 pt-4 border-t" style="border-color: rgba(212, 175, 55, 0.3);">
+                                        <p class="text-sm text-gray-400"><i class="fas fa-users mr-2 text-gold"></i>Max Guests: <span class="text-gold font-bold">${room.maxGuests}</span></p>
+                                    </div>
+                                </div>
+                                <div class="${room.images && room.images.length > 0 ? 'md:w-2/5' : 'md:w-2/3'} p-8 bg-white">
+                                    <p class="text-gray-700 mb-6 text-lg leading-relaxed">${room.description}</p>
+                                    <h3 class="text-xl font-bold mb-4 text-gray-800 flex items-center">
+                                        <i class="fas fa-star text-gold mr-2" style="color: #D4AF37;"></i>Amenities
+                                    </h3>
                                     <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
                                         ${room.amenities.map(amenity => `
                                             <div class="flex items-center text-gray-700">
-                                                <i class="fas fa-check text-green-500 mr-2"></i>
-                                                <span>${amenity}</span>
+                                                <i class="fas fa-check-circle text-gold mr-2" style="color: #D4AF37;"></i>
+                                                <span class="text-sm">${amenity}</span>
                                             </div>
                                         `).join('')}
                                     </div>
-                                    <a href="booking.html?room=${room._id}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition">
+                                    <a href="booking.html?room=${room._id}" class="btn-premium inline-block w-full text-center">
                                         <i class="fas fa-calendar-check mr-2"></i>Book This Room
                                     </a>
                                 </div>
                             </div>
                         </div>
-                    `).join('');
+                    `;
+                    }).join('');
                 } else {
                     document.getElementById('roomsContainer').innerHTML = `
                         <div class="text-center py-12">

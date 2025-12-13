@@ -12,32 +12,47 @@
     <title>Hotel Navjeevan Palace - Budget Hotel in Udaipur, Rajasthan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
     <style>
         .hero-bg {
-            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%231e40af" width="1200" height="600"/></svg>');
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.85) 0%, rgba(44, 44, 44, 0.9) 100%), 
+                        linear-gradient(rgba(212, 175, 55, 0.1), rgba(212, 175, 55, 0.1)),
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="%23D4AF37" stroke-width="0.5" opacity="0.3"/></pattern></defs><rect width="1200" height="600" fill="%231a1a2e"/><rect width="1200" height="600" fill="url(%23grid)"/></svg>');
             background-size: cover;
             background-position: center;
+            position: relative;
+        }
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
         }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50" style="background: linear-gradient(135deg, #FFFEF7 0%, #F5F5DC 100%);">
     <!-- Navigation -->
-    <nav class="bg-blue-900 text-white shadow-lg sticky top-0 z-50">
+    <nav class="nav-premium text-white sticky top-0 z-50 backdrop-blur-sm">
         <div class="container mx-auto px-4">
             <div class="flex justify-between items-center py-4">
                 <div class="flex items-center space-x-3">
-                    <i class="fas fa-hotel text-3xl"></i>
+                    <div class="feature-icon-premium">
+                        <i class="fas fa-hotel"></i>
+                    </div>
                     <div>
-                        <h1 class="text-xl font-bold">Hotel Navjeevan Palace</h1>
-                        <p class="text-xs text-blue-200">Udaipur, Rajasthan</p>
+                        <h1 class="text-xl font-bold text-gold">Hotel Navjeevan Palace</h1>
+                        <p class="text-xs" style="color: #D4AF37;">Udaipur, Rajasthan</p>
                     </div>
                 </div>
                 <div class="hidden md:flex items-center space-x-6">
-                    <a href="index.html" class="hover:text-blue-200 transition">Home</a>
-                    <a href="rooms.html" class="hover:text-blue-200 transition">Rooms & Pricing</a>
-                    <a href="about.html" class="hover:text-blue-200 transition">About Us</a>
-                    <a href="contact.html" class="hover:text-blue-200 transition">Contact</a>
-                    <a href="booking.html" class="bg-blue-700 hover:bg-blue-600 px-4 py-2 rounded transition">Book Now</a>
+                    <a href="index.html" class="hover:text-gold transition duration-300 font-medium">Home</a>
+                    <a href="rooms.html" class="hover:text-gold transition duration-300 font-medium">Rooms & Pricing</a>
+                    <a href="about.html" class="hover:text-gold transition duration-300 font-medium">About Us</a>
+                    <a href="contact.html" class="hover:text-gold transition duration-300 font-medium">Contact</a>
+                    <a href="booking.html" class="btn-premium">Book Now</a>
                 </div>
                 <button class="md:hidden" onclick="toggleMobileMenu()">
                     <i class="fas fa-bars text-2xl"></i>
@@ -55,111 +70,153 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero-bg text-white py-20">
-        <div class="container mx-auto px-4 text-center">
-            <h2 class="text-5xl font-bold mb-4">Welcome to Hotel Navjeevan Palace</h2>
-            <p class="text-xl mb-8">Your Comfortable Stay in the Heart of Udaipur</p>
-            <a href="booking.html" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition inline-block">
-                Book Your Room Now
-            </a>
+    <section class="hero-bg text-white py-32 relative overflow-hidden">
+        <div class="container mx-auto px-4 text-center relative z-10 fade-in-up">
+            <div class="mb-6">
+                <span class="badge-premium mb-4 inline-block">Luxury Awaits</span>
+            </div>
+            <h2 class="text-6xl md:text-7xl font-bold mb-6" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.3);">
+                Welcome to <span class="text-gold">Hotel Navjeevan Palace</span>
+            </h2>
+            <p class="text-2xl md:text-3xl mb-4 font-light" style="color: #F4D03F;">Your Comfortable Stay in the Heart of Udaipur</p>
+            <p class="text-lg mb-10 text-gray-300 max-w-2xl mx-auto">Experience luxury and comfort in the City of Lakes</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <a href="booking.html" class="btn-premium text-lg px-10 py-4 interactive-hover">
+                    <i class="fas fa-calendar-check mr-2"></i>Book Your Room Now
+                </a>
+                <a href="rooms.html" class="px-10 py-4 border-2 border-gold text-white rounded-full font-semibold hover:bg-gold hover:bg-opacity-20 transition duration-300">
+                    <i class="fas fa-bed mr-2"></i>View Rooms
+                </a>
+            </div>
         </div>
+        <div class="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-amber-50 to-transparent"></div>
     </section>
 
     <!-- Features Section -->
-    <section class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Why Choose Us</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="text-center p-6">
-                    <div class="bg-blue-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-map-marker-alt text-3xl text-blue-600"></i>
+    <section class="section-premium py-20 relative">
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="text-center mb-16">
+                <span class="badge-premium mb-4 inline-block">Why Choose Us</span>
+                <h2 class="text-4xl md:text-5xl font-bold mb-4 text-gray-800">Experience Excellence</h2>
+                <div class="divider-gold max-w-32 mx-auto"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div class="card-premium text-center p-8 interactive-hover">
+                    <div class="feature-icon-premium mx-auto mb-6">
+                        <i class="fas fa-map-marker-alt"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-2 text-gray-800">Prime Location</h3>
-                    <p class="text-gray-600">Located on City Station Road, just minutes away from Udaipur Railway Station and major tourist attractions.</p>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">Prime Location</h3>
+                    <p class="text-gray-600 leading-relaxed">Located on City Station Road, just minutes away from Udaipur Railway Station and major tourist attractions.</p>
                 </div>
-                <div class="text-center p-6">
-                    <div class="bg-blue-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-rupee-sign text-3xl text-blue-600"></i>
+                <div class="card-premium text-center p-8 interactive-hover">
+                    <div class="feature-icon-premium mx-auto mb-6">
+                        <i class="fas fa-rupee-sign"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-2 text-gray-800">Budget-Friendly</h3>
-                    <p class="text-gray-600">Affordable rates starting from ₹999 per night. Perfect for families, solo travelers, and groups.</p>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">Budget-Friendly</h3>
+                    <p class="text-gray-600 leading-relaxed">Affordable rates starting from <span class="text-gold font-bold">₹999</span> per night. Perfect for families, solo travelers, and groups.</p>
                 </div>
-                <div class="text-center p-6">
-                    <div class="bg-blue-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-concierge-bell text-3xl text-blue-600"></i>
+                <div class="card-premium text-center p-8 interactive-hover">
+                    <div class="feature-icon-premium mx-auto mb-6">
+                        <i class="fas fa-concierge-bell"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-2 text-gray-800">Comfortable Stay</h3>
-                    <p class="text-gray-600">Clean, well-maintained rooms with modern amenities including AC, TV, WiFi, and 24/7 hot water.</p>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">Comfortable Stay</h3>
+                    <p class="text-gray-600 leading-relaxed">Clean, well-maintained rooms with modern amenities including AC, TV, WiFi, and 24/7 hot water.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Room Types Preview -->
-    <section class="py-16 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Our Rooms</h2>
+    <section class="py-20 bg-white relative overflow-hidden">
+        <div class="absolute inset-0 opacity-5">
+            <div class="absolute inset-0" style="background-image: repeating-linear-gradient(45deg, #D4AF37, #D4AF37 10px, transparent 10px, transparent 20px);"></div>
+        </div>
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="text-center mb-16">
+                <span class="badge-premium mb-4 inline-block">Accommodation</span>
+                <h2 class="text-4xl md:text-5xl font-bold mb-4 text-gray-800">Our <span class="text-gold">Premium Rooms</span></h2>
+                <div class="divider-gold max-w-32 mx-auto"></div>
+            </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8" id="roomsPreview">
                 <!-- Rooms will be loaded dynamically -->
             </div>
-            <div class="text-center mt-8">
-                <a href="rooms.html" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition inline-block">
-                    View All Rooms & Pricing
+            <div class="text-center mt-12">
+                <a href="rooms.html" class="btn-premium text-lg px-10 py-4 inline-block">
+                    <i class="fas fa-arrow-right mr-2"></i>View All Rooms & Pricing
                 </a>
             </div>
         </div>
     </section>
 
     <!-- Contact Info Section -->
-    <section class="py-16 bg-blue-900 text-white">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                <div>
-                    <i class="fas fa-phone text-4xl mb-4"></i>
-                    <h3 class="text-xl font-bold mb-2">Phone</h3>
-                    <p>0294-2482909</p>
-                    <p>7230082909</p>
+    <section class="py-20 relative" style="background: linear-gradient(135deg, #1a1a2e 0%, #2C2C2C 100%);">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute inset-0" style="background-image: radial-gradient(circle at 2px 2px, #D4AF37 1px, transparent 0); background-size: 40px 40px;"></div>
+        </div>
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="text-center mb-12">
+                <span class="badge-premium mb-4 inline-block">Get in Touch</span>
+                <h2 class="text-4xl md:text-5xl font-bold mb-4 text-white">Contact <span class="text-gold">Information</span></h2>
+                <div class="divider-gold max-w-32 mx-auto"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 text-center">
+                <div class="card-premium p-8 interactive-hover">
+                    <div class="feature-icon-premium mx-auto mb-6">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 text-gray-800">Phone</h3>
+                    <p class="text-gray-600 font-semibold">0294-2482909</p>
+                    <p class="text-gray-600 font-semibold">7230082909</p>
                 </div>
-                <div>
-                    <i class="fas fa-envelope text-4xl mb-4"></i>
-                    <h3 class="text-xl font-bold mb-2">Email</h3>
-                    <p>navjeevanhoteludr@yahoo.com</p>
+                <div class="card-premium p-8 interactive-hover">
+                    <div class="feature-icon-premium mx-auto mb-6">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 text-gray-800">Email</h3>
+                    <p class="text-gray-600">navjeevanhoteludr@yahoo.com</p>
                 </div>
-                <div>
-                    <i class="fas fa-map-marker-alt text-4xl mb-4"></i>
-                    <h3 class="text-xl font-bold mb-2">Address</h3>
-                    <p>1, Shivaji Nagar, City Station Road<br>Udaipur-313001 (Raj.)</p>
+                <div class="card-premium p-8 interactive-hover">
+                    <div class="feature-icon-premium mx-auto mb-6">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 text-gray-800">Address</h3>
+                    <p class="text-gray-600">1, Shivaji Nagar, City Station Road<br>Udaipur-313001 (Raj.)</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-8">
+    <footer class="py-12 relative" style="background: linear-gradient(135deg, #1a1a2e 0%, #2C2C2C 100%); border-top: 3px solid #D4AF37;">
         <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-8">
                 <div>
-                    <h3 class="text-xl font-bold mb-4">Hotel Navjeevan Palace</h3>
-                    <p class="text-gray-400">A budget-friendly hotel offering comfortable accommodation in the heart of Udaipur, Rajasthan.</p>
+                    <div class="flex items-center mb-4">
+                        <div class="feature-icon-premium mr-3" style="width: 50px; height: 50px;">
+                            <i class="fas fa-hotel"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gold">Hotel Navjeevan Palace</h3>
+                    </div>
+                    <p class="text-gray-400 leading-relaxed">A premium hotel offering comfortable accommodation in the heart of Udaipur, Rajasthan.</p>
                 </div>
                 <div>
-                    <h3 class="text-xl font-bold mb-4">Quick Links</h3>
+                    <h3 class="text-xl font-bold mb-4 text-gold">Quick Links</h3>
                     <ul class="space-y-2 text-gray-400">
-                        <li><a href="index.html" class="hover:text-white transition">Home</a></li>
-                        <li><a href="rooms.html" class="hover:text-white transition">Rooms & Pricing</a></li>
-                        <li><a href="about.html" class="hover:text-white transition">About Us</a></li>
-                        <li><a href="contact.html" class="hover:text-white transition">Contact</a></li>
+                        <li><a href="index.html" class="hover:text-gold transition duration-300"><i class="fas fa-chevron-right mr-2 text-gold text-xs"></i>Home</a></li>
+                        <li><a href="rooms.html" class="hover:text-gold transition duration-300"><i class="fas fa-chevron-right mr-2 text-gold text-xs"></i>Rooms & Pricing</a></li>
+                        <li><a href="about.html" class="hover:text-gold transition duration-300"><i class="fas fa-chevron-right mr-2 text-gold text-xs"></i>About Us</a></li>
+                        <li><a href="contact.html" class="hover:text-gold transition duration-300"><i class="fas fa-chevron-right mr-2 text-gold text-xs"></i>Contact</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h3 class="text-xl font-bold mb-4">Contact Us</h3>
-                    <p class="text-gray-400 mb-2"><i class="fas fa-phone mr-2"></i>0294-2482909 / 7230082909</p>
-                    <p class="text-gray-400 mb-2"><i class="fas fa-envelope mr-2"></i>navjeevanhoteludr@yahoo.com</p>
-                    <p class="text-gray-400"><i class="fas fa-map-marker-alt mr-2"></i>1, Shivaji Nagar, City Station Road, Udaipur-313001</p>
+                    <h3 class="text-xl font-bold mb-4 text-gold">Contact Us</h3>
+                    <p class="text-gray-400 mb-3"><i class="fas fa-phone mr-2 text-gold"></i>0294-2482909 / 7230082909</p>
+                    <p class="text-gray-400 mb-3"><i class="fas fa-envelope mr-2 text-gold"></i>navjeevanhoteludr@yahoo.com</p>
+                    <p class="text-gray-400"><i class="fas fa-map-marker-alt mr-2 text-gold"></i>1, Shivaji Nagar, City Station Road, Udaipur-313001</p>
                 </div>
             </div>
-            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
-                <p>&copy; 2024 Hotel Navjeevan Palace. All rights reserved.</p>
+            <div class="border-t pt-8 text-center" style="border-color: rgba(212, 175, 55, 0.3);">
+                <p class="text-gray-400">&copy; 2024 Hotel Navjeevan Palace. All rights reserved. | <span class="text-gold">Designed with Excellence</span></p>
             </div>
         </div>
     </footer>
@@ -179,23 +236,38 @@
                 
                 if (data.success && data.rooms) {
                     const container = document.getElementById('roomsPreview');
-                    container.innerHTML = data.rooms.slice(0, 3).map(room => `
-                        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-                            <div class="bg-blue-600 text-white p-4">
-                                <h3 class="text-xl font-bold">${room.type}</h3>
-                                <p class="text-2xl font-bold mt-2">₹${room.price.toLocaleString('en-IN')} <span class="text-sm font-normal">/night</span></p>
+                    container.innerHTML = data.rooms.slice(0, 3).map(room => {
+                        const imageUrl = room.images && room.images.length > 0 
+                            ? (room.images[0].startsWith('http') ? room.images[0] : `https://hnp.onrender.com${room.images[0]}`)
+                            : 'https://via.placeholder.com/400x300?text=' + encodeURIComponent(room.type);
+                        
+                        return `
+                        <div class="room-card-premium fade-in-up">
+                            ${room.images && room.images.length > 0 ? `
+                            <div class="relative overflow-hidden h-64">
+                                <img src="${imageUrl}" alt="${room.type}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" onerror="this.src='https://via.placeholder.com/400x300?text=' + encodeURIComponent('${room.type}')">
+                                <div class="absolute top-4 right-4">
+                                    <span class="badge-premium">Popular</span>
+                                </div>
                             </div>
+                            ` : ''}
                             <div class="p-6">
-                                <p class="text-gray-600 mb-4">${room.description}</p>
-                                <ul class="text-sm text-gray-600 mb-4">
-                                    ${room.amenities.slice(0, 4).map(amenity => `<li class="mb-1"><i class="fas fa-check text-green-500 mr-2"></i>${amenity}</li>`).join('')}
+                                <div class="mb-4">
+                                    <h3 class="text-2xl font-bold text-gray-800 mb-2">${room.type}</h3>
+                                    <div class="price-premium">₹${room.price.toLocaleString('en-IN')}</div>
+                                    <p class="text-gray-500 text-sm">per night</p>
+                                </div>
+                                <p class="text-gray-600 mb-4 leading-relaxed">${room.description}</p>
+                                <ul class="text-sm text-gray-600 mb-6 space-y-2">
+                                    ${room.amenities.slice(0, 4).map(amenity => `<li class="flex items-center"><i class="fas fa-check text-gold mr-2" style="color: #D4AF37;"></i><span>${amenity}</span></li>`).join('')}
                                 </ul>
-                                <a href="booking.html?room=${room._id}" class="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center py-2 rounded transition">
-                                    Book Now
+                                <a href="booking.html?room=${room._id}" class="btn-premium w-full text-center block">
+                                    <i class="fas fa-calendar-check mr-2"></i>Book Now
                                 </a>
                             </div>
                         </div>
-                    `).join('');
+                    `;
+                    }).join('');
                 }
             } catch (error) {
                 console.error('Error loading rooms:', error);

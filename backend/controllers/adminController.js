@@ -16,14 +16,21 @@ const login = async (req, res) => {
       return res.render('admin/login', { error: 'Email and password are required' });
     }
 
-    const admin = await AdminUser.findOne({ email: email.toLowerCase() });
-    if (!admin || !admin.isActive) {
-      return res.render('admin/login', { error: 'Invalid credentials' });
+    const admin = await AdminUser.findOne({ email: email.toLowerCase().trim() });
+    if (!admin) {
+      console.log('Login attempt - Admin not found:', email);
+      return res.render('admin/login', { error: 'Invalid email or password' });
+    }
+
+    if (!admin.isActive) {
+      console.log('Login attempt - Admin inactive:', email);
+      return res.render('admin/login', { error: 'Account is inactive. Please contact administrator.' });
     }
 
     const isMatch = await admin.comparePassword(password);
     if (!isMatch) {
-      return res.render('admin/login', { error: 'Invalid credentials' });
+      console.log('Login attempt - Password mismatch:', email);
+      return res.render('admin/login', { error: 'Invalid email or password' });
     }
 
     // Update last login
@@ -35,10 +42,11 @@ const login = async (req, res) => {
     req.session.adminEmail = admin.email;
     req.session.adminName = admin.name;
 
+    console.log('✅ Admin login successful:', email);
     res.redirect('/admin/dashboard');
   } catch (error) {
     console.error('Login error:', error);
-    res.render('admin/login', { error: 'Login failed. Please try again.' });
+    res.render('admin/login', { error: 'Login failed. Please try again. Error: ' + error.message });
   }
 };
 

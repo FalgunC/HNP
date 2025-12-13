@@ -13,9 +13,18 @@ const seedData = async () => {
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@hotelnavjeevanpalace.com';
     const adminPassword = process.env.ADMIN_PASSWORD || 'Admin@123';
     
-    const existingAdmin = await AdminUser.findOne({ email: adminEmail });
+    let existingAdmin = await AdminUser.findOne({ email: adminEmail });
     if (existingAdmin) {
-      console.log('⚠️ Admin user already exists');
+      // Update password if it's the default or if we want to reset it
+      if (process.env.RESET_ADMIN_PASSWORD === 'true') {
+        existingAdmin.password = adminPassword;
+        await existingAdmin.save();
+        console.log('✅ Admin user password updated:', adminEmail);
+        console.log('   New Password:', adminPassword);
+      } else {
+        console.log('⚠️ Admin user already exists:', adminEmail);
+        console.log('   To reset password, set RESET_ADMIN_PASSWORD=true in .env');
+      }
     } else {
       const admin = new AdminUser({
         email: adminEmail,
@@ -31,46 +40,45 @@ const seedData = async () => {
     // Seed Rooms
     const rooms = [
       {
-        name: 'Standard Room',
-        type: 'Standard Room',
+        name: 'Single Bed 1',
+        type: 'Single Bed 1',
         price: 999,
-        description: 'Comfortable budget-friendly room perfect for solo travelers or couples. Features essential amenities for a pleasant stay.',
+        description: 'Comfortable single bed room perfect for solo travelers. Features essential amenities including AC, TV, attached bathroom, and 24/7 hot water.',
         amenities: ['AC', 'TV', 'Attached Bathroom', '24/7 Hot Water', 'Room Service', 'Free WiFi'],
-        maxGuests: 2,
-        images: [],
+        maxGuests: 1,
+        images: ['/images/single-bed-1.jpg'],
         isActive: true
       },
       {
-        name: 'Deluxe Room',
-        type: 'Deluxe Room',
+        name: 'Single Bed 2',
+        type: 'Single Bed 2',
         price: 1499,
-        description: 'Spacious and well-appointed room with modern amenities. Ideal for families or guests seeking extra comfort.',
+        description: 'Spacious single bed room with modern amenities. Ideal for solo travelers seeking extra comfort and space.',
         amenities: ['AC', 'TV', 'Attached Bathroom', '24/7 Hot Water', 'Room Service', 'Free WiFi', 'Mini Fridge', 'Comfortable Seating'],
-        maxGuests: 3,
-        images: [],
+        maxGuests: 1,
+        images: ['/images/single-bed-2.jpg'],
         isActive: true
       },
       {
-        name: 'Family Suite',
-        type: 'Family Suite',
+        name: 'Double Bed',
+        type: 'Double Bed',
         price: 2999,
-        description: 'Luxurious family suite with separate living area. Perfect for families or groups looking for premium accommodation.',
-        amenities: ['AC', 'TV', 'Attached Bathroom', '24/7 Hot Water', 'Room Service', 'Free WiFi', 'Mini Fridge', 'Living Area', 'Extra Bedding', 'Premium Furnishings'],
-        maxGuests: 4,
-        images: [],
+        description: 'Comfortable double bed room perfect for couples. Features all modern amenities including AC, TV, attached bathroom, and premium furnishings.',
+        amenities: ['AC', 'TV', 'Attached Bathroom', '24/7 Hot Water', 'Room Service', 'Free WiFi', 'Mini Fridge', 'Extra Bedding', 'Premium Furnishings'],
+        maxGuests: 2,
+        images: ['/images/double-bed.jpg'],
         isActive: true
       }
     ];
 
+    // Delete old rooms and create new ones with updated data
+    await Room.deleteMany({});
+    console.log('🗑️  Old rooms deleted');
+    
     for (const roomData of rooms) {
-      const existingRoom = await Room.findOne({ type: roomData.type });
-      if (existingRoom) {
-        console.log(`⚠️ Room ${roomData.type} already exists`);
-      } else {
-        const room = new Room(roomData);
-        await room.save();
-        console.log(`✅ Room created: ${roomData.type}`);
-      }
+      const room = new Room(roomData);
+      await room.save();
+      console.log(`✅ Room created: ${roomData.type} - ₹${roomData.price}/night`);
     }
 
     console.log('\n✅ Seeding completed!');

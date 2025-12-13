@@ -71,7 +71,7 @@ This guide will help you deploy the Hotel Navjeevan Palace booking website to pr
    BANK_ACCOUNT_NUMBER=your-account-number
    BANK_IFSC=your-ifsc-code
    BANK_UPI_ID=your-upi-id
-   FRONTEND_URL=https://your-netlify-site.netlify.app
+   FRONTEND_URL=https://hotelnavjeevanpalace.netlify.app
    ```
 
 6. **Deploy:**
