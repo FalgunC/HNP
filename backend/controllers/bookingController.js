@@ -79,11 +79,27 @@ const createBooking = async (req, res) => {
     // Populate room details for response
     await booking.populate('room_id');
 
-    // Send enquiry acknowledgment notifications (async, don't wait)
+    // Send enquiry acknowledgment notifications (non-blocking but safe)
+Promise.allSettled([
+  (async () => {
     console.log('📧 Sending enquiry acknowledgment email to:', booking.email);
-    sendEnquiryAcknowledgment(booking).catch(err => console.error('Email error:', err));
+    await sendEnquiryAcknowledgment(booking);
+    console.log('✅ Enquiry email sent successfully');
+  })(),
+  (async () => {
     console.log('📱 Sending enquiry acknowledgment SMS to:', booking.phone);
-    sendEnquiryAcknowledgmentSMS(booking).catch(err => console.error('SMS error:', err));
+    await sendEnquiryAcknowledgmentSMS(booking);
+    console.log('✅ Enquiry SMS sent successfully');
+  })()
+]).then(results => {
+  results.forEach((r, i) => {
+    if (r.status === 'rejected') {
+      console.error(`❌ Notification ${i === 0 ? 'Email' : 'SMS'} failed:`, r.reason?.message);
+    }
+  });
+});
+
+
 
     res.status(201).json({
       success: true,
