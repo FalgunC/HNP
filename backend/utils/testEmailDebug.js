@@ -28,7 +28,7 @@ async function testEmailDebug() {
     customer_name: 'Test User',
     email: 'manoj9828@gmail.com', // Change this to your email
     phone: '1234567890',
-    room_type: 'Deluxe Room',
+    room_type: 'Standard Room',
     check_in: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     check_out: new Date(Date.now() + 9 * 24 * 60 * 60 * 1000),
     nights: 2,

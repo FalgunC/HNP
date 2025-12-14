@@ -40,33 +40,33 @@ const seedData = async () => {
     // Seed Rooms
     const rooms = [
       {
-        name: 'Single Bed 1',
-        type: 'Single Bed 1',
+        name: 'Ordinary / Basic Room',
+        type: 'Ordinary / Basic Room',
         price: 999,
-        description: 'Comfortable single bed room perfect for solo travelers. Features essential amenities including AC, TV, attached bathroom, and 24/7 hot water.',
+        description: 'Clean and simple room with essential amenities. Best for budget travelers seeking comfortable accommodation at affordable rates.',
         amenities: ['AC', 'TV', 'Attached Bathroom', '24/7 Hot Water', 'Room Service', 'Free WiFi'],
         maxGuests: 1,
-        images: ['/images/single-bed-1.jpg'],
+        images: ['/images/ordinary-basic.jpg'],
         isActive: true
       },
       {
-        name: 'Single Bed 2',
-        type: 'Single Bed 2',
-        price: 1499,
-        description: 'Spacious single bed room with modern amenities. Ideal for solo travelers seeking extra comfort and space.',
-        amenities: ['AC', 'TV', 'Attached Bathroom', '24/7 Hot Water', 'Room Service', 'Free WiFi', 'Mini Fridge', 'Comfortable Seating'],
-        maxGuests: 1,
-        images: ['/images/single-bed-2.jpg'],
+        name: 'Budget / Economy Room',
+        type: 'Budget / Economy Room',
+        price: 1450,
+        description: 'Comfortable room with better space and value for money. Ideal for short stays with essential amenities and modern facilities.',
+        amenities: ['AC', 'TV', 'Attached Bathroom', '24/7 Hot Water', 'Room Service', 'Free WiFi', 'Comfortable Seating'],
+        maxGuests: 2,
+        images: ['/images/budget-economy.jpg'],
         isActive: true
       },
       {
-        name: 'Double Bed',
-        type: 'Double Bed',
-        price: 2999,
-        description: 'Comfortable double bed room perfect for couples. Features all modern amenities including AC, TV, attached bathroom, and premium furnishings.',
+        name: 'Standard Room',
+        type: 'Standard Room',
+        price: 2950,
+        description: 'More spacious and comfortable room with premium amenities. Best option in the property, suitable for couples and families.',
         amenities: ['AC', 'TV', 'Attached Bathroom', '24/7 Hot Water', 'Room Service', 'Free WiFi', 'Mini Fridge', 'Extra Bedding', 'Premium Furnishings'],
         maxGuests: 2,
-        images: ['/images/double-bed.jpg'],
+        images: ['/images/standard.jpg'],
         isActive: true
       }
     ];

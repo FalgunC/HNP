@@ -482,9 +482,6 @@ const generateBookingConfirmationEmail = (booking) => {
           <span class="label">UPI ID:</span>
           <span class="value">${process.env.BANK_UPI_ID || 'N/A'}</span>
         </div>
-        <p style="margin-top: 15px; color: #dc2626; font-weight: 600; font-size: 14px;">
-          ⚠️ Please complete the payment and share the transaction details for confirmation.
-        </p>
         <p style="margin-top: 15px; color: #dc2626; font-weight: 600; font-size: 14px; background: #fef2f2; padding: 12px; border-radius: 4px;">
           📱 <strong>Please share the payment screenshot on the following number:</strong><br>
           <strong style="font-size: 16px;">7230082909</strong>
@@ -737,7 +734,6 @@ BANK TRANSFER DETAILS:
 - IFSC Code: ${process.env.BANK_IFSC || 'N/A'}
 - UPI ID: ${process.env.BANK_UPI_ID || 'N/A'}
 
-Please complete the payment and share the transaction details for confirmation.
 Please share the payment screenshot on the following number: 7230082909
 ` : ''}
 

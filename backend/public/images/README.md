@@ -4,9 +4,9 @@ Place hotel room images in this directory.
 
 ## Image Naming Convention
 
-- `single-bed-1.jpg` - Single Bed 1 room
-- `single-bed-2.jpg` - Single Bed 2 room  
-- `double-bed.jpg` - Double Bed room
+- `ordinary-basic.jpg` - Ordinary / Basic Room
+- `budget-economy.jpg` - Budget / Economy Room  
+- `standard.jpg` - Standard Room
 
 ## Image Requirements
 
