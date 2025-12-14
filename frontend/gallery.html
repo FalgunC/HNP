@@ -3,12 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="About Hotel Navjeevan Palace - Budget-friendly hotel in Udaipur, Rajasthan. Learn about our history, services, and commitment to comfortable stays.">
-    <meta name="keywords" content="about hotel navjeevan palace, udaipur hotel history, budget hotel udaipur">
-    <title>About Us - Hotel Navjeevan Palace, Udaipur</title>
+    <meta name="description" content="Gallery - Hotel Navjeevan Palace, Udaipur. View photos of our comfortable rooms and facilities.">
+    <meta name="keywords" content="hotel gallery udaipur, hotel photos, hotel images">
+    <title>Gallery - Hotel Navjeevan Palace, Udaipur</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
+    <style>
+        .gallery-slider {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            overflow: hidden;
+            border-radius: 12px;
+        }
+        .gallery-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        .gallery-slide.active {
+            opacity: 1;
+        }
+        .gallery-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .gallery-dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .gallery-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ccc;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .gallery-dot.active {
+            background: #D4AF37;
+        }
+    </style>
 </head>
 <body class="bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50" style="background: linear-gradient(135deg, #FFFEF7 0%, #F5F5DC 100%);">
     <!-- Navigation -->
@@ -25,8 +68,8 @@
                 <div class="hidden md:flex items-center space-x-6">
                     <a href="index.html" class="hover:text-gold transition duration-300 font-medium">Home</a>
                     <a href="rooms.html" class="hover:text-gold transition duration-300 font-medium">Rooms & Pricing</a>
-                    <a href="about.html" class="hover:text-gold transition duration-300 font-medium text-gold">About Us</a>
-                    <a href="gallery.html" class="hover:text-gold transition duration-300 font-medium">Gallery</a>
+                    <a href="about.html" class="hover:text-gold transition duration-300 font-medium">About Us</a>
+                    <a href="gallery.html" class="hover:text-gold transition duration-300 font-medium text-gold">Gallery</a>
                     <a href="contact.html" class="hover:text-gold transition duration-300 font-medium">Contact</a>
                     <a href="booking.html" class="btn-premium">Book Now</a>
                 </div>
@@ -52,32 +95,35 @@
             <div class="absolute inset-0" style="background-image: radial-gradient(circle at 2px 2px, #D4AF37 1px, transparent 0); background-size: 40px 40px;"></div>
         </div>
         <div class="container mx-auto px-4 text-center relative z-10">
-            <span class="badge-premium mb-4 inline-block">About Us</span>
-            <h1 class="text-5xl md:text-6xl font-bold mb-4 text-white">About <span class="text-gold">Hotel Navjeevan Palace</span></h1>
-            <p class="text-xl text-gray-300">Your Comfortable Stay in the Heart of Udaipur</p>
+            <span class="badge-premium mb-4 inline-block">Gallery</span>
+            <h1 class="text-5xl md:text-6xl font-bold mb-4 text-white">Our <span class="text-gold">Gallery</span></h1>
+            <p class="text-xl text-gray-300">Experience the comfort and elegance of Hotel Navjeevan Palace</p>
             <div class="divider-gold max-w-32 mx-auto mt-6"></div>
         </div>
     </section>
 
-    <!-- About Content -->
+    <!-- Gallery Section -->
     <section class="section-premium py-20 relative">
-        <div class="container mx-auto px-4 max-w-4xl relative z-10">
-            <div class="card-premium p-8 md:p-12">
-                <h2 class="text-3xl font-bold text-gray-800 mb-6">Welcome to Hotel Navjeevan Palace</h2>
-                <p class="text-gray-700 text-lg leading-relaxed mb-6">
-                    Hotel Navjeevan Palace is a budget-friendly hotel located in the heart of Udaipur, Rajasthan. 
-                    We offer comfortable accommodation for travelers seeking an affordable yet pleasant stay in the 
-                    City of Lakes.
-                </p>
-                <p class="text-gray-700 text-lg leading-relaxed mb-6">
-                    Strategically located on City Station Road, just minutes away from Udaipur Railway Station, 
-                    our hotel provides easy access to major tourist attractions including the City Palace, Lake Pichola, 
-                    Jagdish Temple, and many more.
-                </p>
-                <p class="text-gray-700 text-lg leading-relaxed">
-                    Our commitment is to provide clean, comfortable rooms with modern amenities at affordable prices, 
-                    making us an ideal choice for families, solo travelers, and groups visiting Udaipur.
-                </p>
+        <div class="container mx-auto px-4 max-w-6xl relative z-10">
+            <div class="gallery-slider">
+                <div class="gallery-slide active">
+                    <img src="gallery-1.jpg" alt="Hotel Navjeevan Palace - Gallery Image 1">
+                </div>
+                <div class="gallery-slide">
+                    <img src="gallery-2.jpg" alt="Hotel Navjeevan Palace - Gallery Image 2">
+                </div>
+                <div class="gallery-slide">
+                    <img src="gallery-3.jpg" alt="Hotel Navjeevan Palace - Gallery Image 3">
+                </div>
+                <div class="gallery-slide">
+                    <img src="gallery-4.jpg" alt="Hotel Navjeevan Palace - Gallery Image 4">
+                </div>
+            </div>
+            <div class="gallery-dots">
+                <div class="gallery-dot active" onclick="goToSlide(0)"></div>
+                <div class="gallery-dot" onclick="goToSlide(1)"></div>
+                <div class="gallery-dot" onclick="goToSlide(2)"></div>
+                <div class="gallery-dot" onclick="goToSlide(3)"></div>
             </div>
         </div>
     </section>
@@ -122,6 +168,42 @@
             const menu = document.getElementById('mobileMenu');
             menu.classList.toggle('hidden');
         }
+
+        // Gallery Auto-Slider
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.gallery-slide');
+        const dots = document.querySelectorAll('.gallery-dot');
+        const totalSlides = slides.length;
+
+        function showSlide(index) {
+            // Remove active class from all slides and dots
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+
+            // Add active class to current slide and dot
+            if (slides[index]) {
+                slides[index].classList.add('active');
+            }
+            if (dots[index]) {
+                dots[index].classList.add('active');
+            }
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            showSlide(currentSlide);
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            showSlide(currentSlide);
+        }
+
+        // Auto-advance slides every 4 seconds
+        setInterval(nextSlide, 4000);
+
+        // Initialize first slide
+        showSlide(0);
     </script>
 </body>
 </html>

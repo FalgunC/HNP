@@ -44,7 +44,7 @@ const seedData = async () => {
         type: 'Ordinary / Basic Room',
         price: 999,
         description: 'Clean and simple room. Best for budget travelers at affordable rates.',
-        amenities: [ 'TV', 'Attached Bathroom', 'Room Service'],
+        amenities: [ 'TV', 'Cooler', 'Attached Bathroom', 'Room Service'],
         maxGuests: 2,
         images: ['/images/ordinary-basic.jpg'],
         isActive: true
