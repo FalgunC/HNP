@@ -79,25 +79,66 @@ const createBooking = async (req, res) => {
     // Populate room details for response
     await booking.populate('room_id');
 
-    // Send enquiry acknowledgment notifications (non-blocking but safe)
-Promise.allSettled([
-  (async () => {
-    console.log('📧 Sending enquiry acknowledgment email to:', booking.email);
-    await sendEnquiryAcknowledgment(booking);
-    console.log('✅ Enquiry email sent successfully');
-  })(),
-  (async () => {
-    console.log('📱 Sending enquiry acknowledgment SMS to:', booking.phone);
-    await sendEnquiryAcknowledgmentSMS(booking);
-    console.log('✅ Enquiry SMS sent successfully');
-  })()
-]).then(results => {
-  results.forEach((r, i) => {
-    if (r.status === 'rejected') {
-      console.error(`❌ Notification ${i === 0 ? 'Email' : 'SMS'} failed:`, r.reason?.message);
-    }
-  });
-});
+    // Send enquiry acknowledgment notifications (non-blocking, production-safe)
+    // This runs asynchronously and won't block the API response
+    // Convert booking to plain object to ensure all fields are available
+    const bookingData = {
+      booking_id: booking.booking_id,
+      customer_name: booking.customer_name,
+      email: booking.email,
+      phone: booking.phone,
+      room_type: booking.room_type,
+      check_in: booking.check_in,
+      check_out: booking.check_out,
+      nights: booking.nights,
+      guests: booking.guests,
+      amount: booking.amount,
+      payment_mode: booking.payment_mode,
+      payment_status: booking.payment_status,
+      booking_status: booking.booking_status
+    };
+
+    Promise.allSettled([
+      (async () => {
+        try {
+          console.log(`📧 [BOOKING] Sending enquiry acknowledgment email to: ${bookingData.email}`);
+          console.log(`📧 [BOOKING] Booking ID: ${bookingData.booking_id}`);
+          
+          if (!bookingData.email || !bookingData.email.includes('@')) {
+            console.error(`❌ [BOOKING] Invalid email address: ${bookingData.email}`);
+            return;
+          }
+
+          const emailResult = await sendEnquiryAcknowledgment(bookingData);
+          if (emailResult && emailResult.success) {
+            console.log(`✅ [BOOKING] Enquiry email sent successfully (ID: ${emailResult.messageId || 'N/A'})`);
+          } else {
+            console.error(`❌ [BOOKING] Enquiry email failed: ${emailResult?.error || 'Unknown error'}`);
+          }
+        } catch (error) {
+          console.error(`❌ [BOOKING] Enquiry email error: ${error.message}`);
+          console.error(`❌ [BOOKING] Error stack: ${error.stack}`);
+        }
+      })(),
+      (async () => {
+        try {
+          console.log(`📱 [BOOKING] Sending enquiry acknowledgment SMS to: ${bookingData.phone}`);
+          const smsResult = await sendEnquiryAcknowledgmentSMS(bookingData);
+          if (smsResult && smsResult.success) {
+            console.log(`✅ [BOOKING] Enquiry SMS sent successfully (ID: ${smsResult.messageId || 'N/A'})`);
+          } else {
+            console.error(`❌ [BOOKING] Enquiry SMS failed: ${smsResult?.error || 'Unknown error'}`);
+          }
+        } catch (error) {
+          console.error(`❌ [BOOKING] Enquiry SMS error: ${error.message}`);
+          console.error(`❌ [BOOKING] Error stack: ${error.stack}`);
+        }
+      })()
+    ]).catch(error => {
+      // This catch is for the Promise.allSettled itself (should never happen)
+      console.error(`❌ [BOOKING] Notification system error: ${error.message}`);
+      console.error(`❌ [BOOKING] Error stack: ${error.stack}`);
+    });
 
 
 

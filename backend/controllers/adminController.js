@@ -254,10 +254,40 @@ const confirmPayment = async (req, res) => {
     booking.booking_status = 'Confirmed';
     await booking.save();
 
-    // Send confirmation notifications
+    // Populate room details
     await booking.populate('room_id');
-    sendBookingConfirmation(booking).catch(err => console.error('Email error:', err));
-    sendBookingConfirmationSMS(booking).catch(err => console.error('SMS error:', err));
+
+    // Send confirmation notifications (non-blocking, production-safe)
+    Promise.allSettled([
+      (async () => {
+        try {
+          console.log(`📧 [ADMIN] Sending confirmation email to: ${booking.email}`);
+          const emailResult = await sendBookingConfirmation(booking);
+          if (emailResult.success) {
+            console.log(`✅ [ADMIN] Confirmation email sent successfully (ID: ${emailResult.messageId || 'N/A'})`);
+          } else {
+            console.error(`❌ [ADMIN] Confirmation email failed: ${emailResult.error}`);
+          }
+        } catch (error) {
+          console.error(`❌ [ADMIN] Confirmation email error: ${error.message}`);
+        }
+      })(),
+      (async () => {
+        try {
+          console.log(`📱 [ADMIN] Sending confirmation SMS to: ${booking.phone}`);
+          const smsResult = await sendBookingConfirmationSMS(booking);
+          if (smsResult.success) {
+            console.log(`✅ [ADMIN] Confirmation SMS sent successfully (ID: ${smsResult.messageId || 'N/A'})`);
+          } else {
+            console.error(`❌ [ADMIN] Confirmation SMS failed: ${smsResult.error}`);
+          }
+        } catch (error) {
+          console.error(`❌ [ADMIN] Confirmation SMS error: ${error.message}`);
+        }
+      })()
+    ]).catch(error => {
+      console.error(`❌ [ADMIN] Notification system error: ${error.message}`);
+    });
 
     res.json({ success: true, message: 'Payment confirmed and notifications sent' });
   } catch (error) {
@@ -290,28 +320,77 @@ const confirmEnquiry = async (req, res) => {
     // Populate room details
     await booking.populate('room_id');
 
-    // Send confirmation notifications instantly
-    console.log('📧 Sending confirmation email to:', booking.email);
-    const emailResult = await sendBookingConfirmation(booking);
-    if (emailResult.success) {
-      console.log('✅ Confirmation email sent successfully');
-    } else {
-      console.error('❌ Confirmation email failed:', emailResult.error);
+    // Convert booking to plain object to ensure all fields are available
+    const bookingData = {
+      booking_id: booking.booking_id,
+      customer_name: booking.customer_name,
+      email: booking.email,
+      phone: booking.phone,
+      room_type: booking.room_type,
+      check_in: booking.check_in,
+      check_out: booking.check_out,
+      nights: booking.nights,
+      guests: booking.guests,
+      amount: booking.amount,
+      payment_mode: booking.payment_mode,
+      payment_status: booking.payment_status,
+      booking_status: booking.booking_status
+    };
+
+    // Send confirmation notifications (production-ready with proper error handling)
+    let emailResult = { success: false, error: null };
+    let smsResult = { success: false, error: null };
+
+    try {
+      console.log(`📧 [ADMIN] Sending confirmation email to: ${bookingData.email}`);
+      console.log(`📧 [ADMIN] Booking ID: ${bookingData.booking_id}`);
+      
+      if (!bookingData.email || !bookingData.email.includes('@')) {
+        console.error(`❌ [ADMIN] Invalid email address: ${bookingData.email}`);
+        emailResult = { success: false, error: 'Invalid email address' };
+      } else {
+        emailResult = await sendBookingConfirmation(bookingData);
+        if (emailResult && emailResult.success) {
+          console.log(`✅ [ADMIN] Confirmation email sent successfully (ID: ${emailResult.messageId || 'N/A'})`);
+        } else {
+          console.error(`❌ [ADMIN] Confirmation email failed: ${emailResult?.error || 'Unknown error'}`);
+          emailResult = { success: false, error: emailResult?.error || 'Unknown error' };
+        }
+      }
+    } catch (error) {
+      console.error(`❌ [ADMIN] Confirmation email error: ${error.message}`);
+      console.error(`❌ [ADMIN] Error stack: ${error.stack}`);
+      emailResult = { success: false, error: error.message };
     }
 
-    console.log('📱 Sending confirmation SMS to:', booking.phone);
-    const smsResult = await sendBookingConfirmationSMS(booking);
-    if (smsResult.success) {
-      console.log('✅ Confirmation SMS sent successfully');
-    } else {
-      console.error('❌ Confirmation SMS failed:', smsResult.error);
+    try {
+      console.log(`📱 [ADMIN] Sending confirmation SMS to: ${bookingData.phone}`);
+      if (!bookingData.phone || bookingData.phone.length < 10) {
+        console.error(`❌ [ADMIN] Invalid phone number: ${bookingData.phone}`);
+        smsResult = { success: false, error: 'Invalid phone number' };
+      } else {
+        smsResult = await sendBookingConfirmationSMS(bookingData);
+        if (smsResult && smsResult.success) {
+          console.log(`✅ [ADMIN] Confirmation SMS sent successfully (ID: ${smsResult.messageId || 'N/A'})`);
+        } else {
+          console.error(`❌ [ADMIN] Confirmation SMS failed: ${smsResult?.error || 'Unknown error'}`);
+          smsResult = { success: false, error: smsResult?.error || 'Unknown error' };
+        }
+      }
+    } catch (error) {
+      console.error(`❌ [ADMIN] Confirmation SMS error: ${error.message}`);
+      console.error(`❌ [ADMIN] Error stack: ${error.stack}`);
+      smsResult = { success: false, error: error.message };
     }
 
+    // Always return success even if notifications fail (booking is confirmed)
     res.json({ 
       success: true, 
       message: 'Enquiry confirmed! Confirmation email and SMS sent to customer.',
       emailSent: emailResult.success,
-      smsSent: smsResult.success
+      smsSent: smsResult.success,
+      emailError: emailResult.success ? null : emailResult.error,
+      smsError: smsResult.success ? null : smsResult.error
     });
   } catch (error) {
     console.error('Confirm enquiry error:', error);
