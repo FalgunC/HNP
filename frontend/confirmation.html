@@ -7,22 +7,38 @@
     <title>Booking Confirmation - Hotel Navjeevan Palace</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bg-gray-50">
+<body class="bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50" style="background: linear-gradient(135deg, #FFFEF7 0%, #F5F5DC 100%);">
     <!-- Navigation -->
-    <nav class="bg-blue-900 text-white shadow-lg">
+    <nav class="nav-premium text-white sticky top-0 z-50 backdrop-blur-sm">
         <div class="container mx-auto px-4">
             <div class="flex justify-between items-center py-4">
                 <div class="flex items-center space-x-3">
-                    <img src="logo_HNP.png" alt="Hotel Navjeevan Palace Logo" class="h-12 w-auto">
+                    <img src="logo_HNP.png" alt="Hotel Navjeevan Palace Logo" class="h-12 w-12 object-cover" style="border-radius: 50%;">
                     <div>
-                        <h1 class="text-xl font-bold">Hotel Navjeevan Palace</h1>
-                        <p class="text-xs text-blue-200">Udaipur, Rajasthan</p>
+                        <h1 class="text-xl font-bold text-gold">Hotel Navjeevan Palace</h1>
+                        <p class="text-xs" style="color: #D4AF37;">Udaipur, Rajasthan</p>
                     </div>
                 </div>
-                <div class="flex items-center space-x-6">
-                    <a href="index.html" class="hover:text-blue-200 transition">Home</a>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="index.html" class="hover:text-gold transition duration-300 font-medium">Home</a>
+                    <a href="rooms.html" class="hover:text-gold transition duration-300 font-medium">Rooms & Pricing</a>
+                    <a href="about.html" class="hover:text-gold transition duration-300 font-medium">About Us</a>
+                    <a href="contact.html" class="hover:text-gold transition duration-300 font-medium">Contact</a>
+                    <a href="booking.html" class="btn-premium">Book Now</a>
                 </div>
+                <button class="md:hidden" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+            <!-- Mobile Menu -->
+            <div id="mobileMenu" class="hidden md:hidden pb-4">
+                <a href="index.html" class="block py-2 hover:text-blue-200">Home</a>
+                <a href="rooms.html" class="block py-2 hover:text-blue-200">Rooms & Pricing</a>
+                <a href="about.html" class="block py-2 hover:text-blue-200">About Us</a>
+                <a href="contact.html" class="block py-2 hover:text-blue-200">Contact</a>
+                <a href="booking.html" class="block py-2 bg-blue-700 hover:bg-blue-600 px-4 py-2 rounded mt-2 text-center">Book Now</a>
             </div>
         </div>
     </nav>
@@ -41,7 +57,7 @@
                         <div id="statusIcon" class="bg-orange-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
                             <i class="fas fa-clock text-4xl text-orange-600"></i>
                         </div>
-                        <h1 id="statusTitle" class="text-3xl font-bold text-gray-800 mb-2">Enquiry Sent!</h1>
+                        <h1 id="statusTitle" class="text-3xl font-bold text-gray-800 mb-2">Enquiry Sent</h1>
                         <p id="statusMessage" class="text-gray-600">Thank you for your consideration. We will confirm your booking shortly.</p>
                     </div>
 
@@ -114,7 +130,7 @@
                     <div class="bg-gray-50 p-6 rounded-lg mb-6">
                         <h3 class="text-lg font-bold text-gray-800 mb-4">Important Information</h3>
                         <ul class="space-y-2 text-sm text-gray-700">
-                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Confirmation email  have been sent to your registered mail details.</li>
+                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Confirmation email have been sent to your registered mail details.</li>
                             <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Please arrive at the hotel on your check-in date.</li>
                             <li><i class="fas fa-check-circle text-green-500 mr-2"></i>For any queries, contact us at 0294-2482909 or 7230082909.</li>
                             <li id="paymentNote" class="hidden"><i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>Your booking will be confirmed after payment verification.</li>
@@ -141,22 +157,34 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-8">
+    <footer class="py-12 relative" style="background: linear-gradient(135deg, #1a1a2e 0%, #2C2C2C 100%); border-top: 3px solid #D4AF37;">
         <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-8">
                 <div>
-                    <h3 class="text-xl font-bold mb-4">Hotel Navjeevan Palace</h3>
-                    <p class="text-gray-400">A budget-friendly hotel offering comfortable accommodation in the heart of Udaipur, Rajasthan.</p>
+                    <div class="flex items-center mb-4">
+                        <img src="logo_HNP.png" alt="Hotel Navjeevan Palace Logo" class="h-12 w-12 object-cover mr-3" style="border-radius: 50%;">
+                        <h3 class="text-xl font-bold text-gold">Hotel Navjeevan Palace</h3>
+                    </div>
+                    <p class="text-gray-400 leading-relaxed">A Budget hotel offering comfortable accommodation in the city of Udaipur, Rajasthan.</p>
                 </div>
                 <div>
-                    <h3 class="text-xl font-bold mb-4">Contact Us</h3>
-                    <p class="text-gray-400 mb-2"><i class="fas fa-phone mr-2"></i>0294-2482909 / 7230082909</p>
-                    <p class="text-gray-400 mb-2"><i class="fas fa-envelope mr-2"></i>navjeevanhoteludr@yahoo.com</p>
-                    <p class="text-gray-400"><i class="fas fa-map-marker-alt mr-2"></i>1, Shivaji Nagar, City Station Road, Udaipur-313001</p>
+                    <h3 class="text-xl font-bold mb-4 text-gold">Quick Links</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="index.html" class="hover:text-gold transition duration-300"><i class="fas fa-chevron-right mr-2 text-gold text-xs"></i>Home</a></li>
+                        <li><a href="rooms.html" class="hover:text-gold transition duration-300"><i class="fas fa-chevron-right mr-2 text-gold text-xs"></i>Rooms & Pricing</a></li>
+                        <li><a href="about.html" class="hover:text-gold transition duration-300"><i class="fas fa-chevron-right mr-2 text-gold text-xs"></i>About Us</a></li>
+                        <li><a href="contact.html" class="hover:text-gold transition duration-300"><i class="fas fa-chevron-right mr-2 text-gold text-xs"></i>Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4 text-gold">Contact Us</h3>
+                    <p class="text-gray-400 mb-3"><i class="fas fa-phone mr-2 text-gold"></i><a href="tel:02942482909" class="hover:text-gold transition duration-300">0294-2482909</a> / <a href="tel:7230082909" class="hover:text-gold transition duration-300">7230082909</a></p>
+                    <p class="text-gray-400 mb-3"><i class="fas fa-envelope mr-2 text-gold"></i><a href="mailto:navjeevanudaipur@gmail.com" class="hover:text-gold transition duration-300">navjeevanudaipur@gmail.com</a></p>
+                    <p class="text-gray-400"><i class="fas fa-map-marker-alt mr-2 text-gold"></i><a href="https://www.google.com/maps/search/?api=1&query=Hotel+Navjeevan+Palace+Udaipur" target="_blank" class="hover:text-gold transition duration-300">1, Shivaji Nagar, City Station Road, Udaipur-313001</a></p>
                 </div>
             </div>
-            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
-                <p>&copy; 2024 Hotel Navjeevan Palace. All rights reserved.</p>
+            <div class="border-t pt-8 text-center" style="border-color: rgba(212, 175, 55, 0.3);">
+                <p class="text-gray-400">&copy; 2024 Hotel Navjeevan Palace. All rights reserved. | Subject to Udaipur Jurisdiction Only.</p>
             </div>
         </div>
     </footer>
@@ -201,9 +229,9 @@
                     if (booking.booking_status === 'Enquiry') {
                         statusIcon.className = 'bg-orange-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4';
                         statusIcon.innerHTML = '<i class="fas fa-clock text-4xl text-orange-600"></i>';
-                        statusTitle.textContent = 'Enquiry Received!';
+                        statusTitle.textContent = 'Enquiry Sent';
                         statusMessage.textContent = 'Thank you for your consideration. We will confirm your booking shortly.';
-                        document.getElementById('paymentNote').innerHTML = '<i class="fas fa-info-circle text-blue-500 mr-2"></i>Your enquiry is being reviewed. Confirmation email and SMS will be sent shortly.';
+                        document.getElementById('paymentNote').innerHTML = '<i class="fas fa-info-circle text-blue-500 mr-2"></i>Your enquiry is being reviewed. Confirmation email will be sent shortly.';
                         document.getElementById('paymentNote').classList.remove('hidden');
                     } else if (booking.booking_status === 'Confirmed') {
                         statusIcon.className = 'bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4';
@@ -245,7 +273,13 @@
         }
 
         loadBookingDetails();
+        
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
     </script>
 </body>
 </html>
+
 
