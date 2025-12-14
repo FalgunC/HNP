@@ -1,0 +1,32 @@
+# Render Blueprint for Hotel Navjeevan Palace Backend
+# This file allows one-click deployment on Render
+
+services:
+  - type: web
+    name: hotel-navjeevan-palace-backend
+    env: node
+    region: singapore  # Change to your preferred region
+    plan: free  # Change to 'starter' or 'standard' for production
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      # Add other environment variables in Render dashboard
+      # MONGODB_URI
+      # SESSION_SECRET
+      # BREVO_API_KEY
+      # BREVO_SENDER_EMAIL
+      # BREVO_SENDER_NAME
+      # SMS_PROVIDER
+      # BREVO_SMS_SENDER
+      # FRONTEND_URL
+      # NETLIFY_URL
+      # BANK_NAME
+      # BANK_ACCOUNT_NAME
+      # BANK_ACCOUNT_NUMBER
+      # BANK_IFSC
+      # BANK_UPI_ID
+
