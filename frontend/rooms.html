@@ -94,7 +94,7 @@
                 </div>
             </div>
             <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
-                <p>&copy; 2024 Hotel Navjeevan Palace. All rights reserved.</p>
+                <p>&copy; 2024 Hotel Navjeevan Palace. All rights reserved. | Subject to Udaipur Jurisdiction Only.</p>
             </div>
         </div>
     </footer>
@@ -124,9 +124,6 @@
                                 ${room.images && room.images.length > 0 ? `
                                 <div class="md:w-2/5 relative overflow-hidden">
                                     <img src="${imageUrl}" alt="${room.type}" class="w-full h-80 md:h-full object-cover transition-transform duration-700 hover:scale-110" onerror="this.src='https://via.placeholder.com/600x400?text=' + encodeURIComponent('${room.type}')">
-                                    <div class="absolute top-4 left-4">
-                                        <span class="badge-premium">Featured</span>
-                                    </div>
                                 </div>
                                 ` : ''}
                                 <div class="${room.images && room.images.length > 0 ? 'md:w-1/3' : 'md:w-1/3'} p-8 flex flex-col justify-center relative" style="background: linear-gradient(135deg, #1a1a2e 0%, #2C2C2C 100%);">

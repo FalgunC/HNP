@@ -377,6 +377,29 @@ const generateEnquiryAcknowledgmentEmail = (booking) => {
         </div>
       </div>
       
+      ${(paymentMode === 'Bank Transfer' || paymentMode === 'Pay Online') ? `
+      <div class="enquiry-box" style="background: #fee2e2; border-left-color: #dc2626;">
+        <p style="color: #dc2626; font-weight: 700; font-size: 16px; text-align: center; padding: 15px; border-radius: 4px; border: 2px solid #dc2626;">
+          ⚠️ <strong>BOOKING AMOUNT IS NON-REFUNDABLE.</strong>
+        </p>
+      </div>
+      ` : ''}
+      
+      <div class="enquiry-box" style="background: #eff6ff; border-left-color: #3b82f6;">
+        <h2 style="color: #1e40af;">🕐 Check-In / Check-Out Information</h2>
+        <div class="detail-row">
+          <span class="label">Check-in Time:</span>
+          <span class="value"><strong>12:00 PM (Noon)</strong></span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Check-out Time:</span>
+          <span class="value"><strong>10:00 AM</strong></span>
+        </div>
+        <p style="margin-top: 15px; color: #1e40af; font-size: 14px; padding: 12px; border-radius: 4px;">
+          <strong>Note:</strong> Early check-in and late check-out are subject to availability and may incur additional charges.
+        </p>
+      </div>
+      
       <div class="message">
         <p>Please keep this Enquiry ID - </p>
         <p><strong>(${bookingId})</strong></p>
@@ -422,6 +445,15 @@ ENQUIRY DETAILS:
 - Payment Mode: ${paymentMode}
 - Payment Status: ${paymentStatus}
 - Status: Pending Confirmation
+
+${(paymentMode === 'Bank Transfer' || paymentMode === 'Pay Online') ? `
+⚠️ BOOKING AMOUNT IS NON-REFUNDABLE.
+` : ''}
+
+CHECK-IN / CHECK-OUT INFORMATION:
+- Check-in Time: 12:00 PM (Noon)
+- Check-out Time: 10:00 AM
+Note: Early check-in and late check-out are subject to availability and may incur additional charges.
 
 Please keep this Enquiry ID (${bookingId}) for your reference.
 
@@ -486,8 +518,32 @@ const generateBookingConfirmationEmail = (booking) => {
           📱 <strong>Please share the payment screenshot on the following number:</strong><br>
           <strong style="font-size: 16px;">7230082909</strong>
         </p>
+        <p style="margin-top: 15px; color: #dc2626; font-weight: 700; font-size: 16px; background: #fee2e2; padding: 15px; border-radius: 4px; text-align: center; border: 2px solid #dc2626;">
+          ⚠️ <strong>BOOKING AMOUNT IS NON-REFUNDABLE.</strong>
+        </p>
       </div>
   ` : '';
+  
+  // Non-refundable notice for Online Payment (separate section if not in bank transfer section)
+  const nonRefundableNotice = (paymentMode === 'Bank Transfer' || paymentMode === 'Pay Online') ? '' : '';
+  
+  // Check-in/Check-out information section (for both payment methods)
+  const checkInOutSection = `
+      <div class="enquiry-box" style="background: #eff6ff; border-left-color: #3b82f6;">
+        <h2 style="color: #1e40af;">🕐 Check-In / Check-Out Information</h2>
+        <div class="detail-row">
+          <span class="label">Check-in Time:</span>
+          <span class="value"><strong>12:00 PM (Noon)</strong></span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Check-out Time:</span>
+          <span class="value"><strong>10:00 AM</strong></span>
+        </div>
+        <p style="margin-top: 15px; color: #1e40af; font-size: 14px; padding: 12px; border-radius: 4px;">
+          <strong>Note:</strong> Early check-in and late check-out are subject to availability and may incur additional charges.
+        </p>
+      </div>
+  `;
 
   const htmlContent = `
 <!DOCTYPE html>
@@ -677,6 +733,8 @@ const generateBookingConfirmationEmail = (booking) => {
       </div>
       
       ${bankTransferSection}
+      ${nonRefundableNotice}
+      ${checkInOutSection}
       
       <div class="message">
         <p>Please keep this Booking ID - </p>
@@ -735,7 +793,14 @@ BANK TRANSFER DETAILS:
 - UPI ID: ${process.env.BANK_UPI_ID || 'N/A'}
 
 Please share the payment screenshot on the following number: 7230082909
+
+⚠️ BOOKING AMOUNT IS NON-REFUNDABLE.
 ` : ''}
+
+CHECK-IN / CHECK-OUT INFORMATION:
+- Check-in Time: 12:00 PM (Noon)
+- Check-out Time: 10:00 AM
+Note: Early check-in and late check-out are subject to availability and may incur additional charges.
 
 Please keep this Booking ID (${bookingId}) for your reference.
 

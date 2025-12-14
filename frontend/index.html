@@ -38,7 +38,7 @@
         <div class="container mx-auto px-4">
             <div class="flex justify-between items-center py-4">
                 <div class="flex items-center space-x-3">
-                    <img src="logo_HNP.png" alt="Hotel Navjeevan Palace Logo" class="h-12 w-auto">
+                    <img src="logo_HNP.png" alt="Hotel Navjeevan Palace Logo" class="h-12 w-12 object-cover" style="border-radius: 50%;">
                     <div>
                         <h1 class="text-xl font-bold text-gold">Hotel Navjeevan Palace</h1>
                         <p class="text-xs" style="color: #D4AF37;">Udaipur, Rajasthan</p>
@@ -189,7 +189,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-8">
                 <div>
                     <div class="flex items-center mb-4">
-                        <img src="logo_HNP.png" alt="Hotel Navjeevan Palace Logo" class="h-12 w-auto mr-3">
+                        <img src="logo_HNP.png" alt="Hotel Navjeevan Palace Logo" class="h-12 w-12 object-cover mr-3" style="border-radius: 50%;">
                         <h3 class="text-xl font-bold text-gold">Hotel Navjeevan Palace</h3>
                     </div>
                     <p class="text-gray-400 leading-relaxed">A Budget hotel offering comfortable accommodation in the city of Udaipur, Rajasthan.</p>
@@ -211,7 +211,7 @@
                 </div>
             </div>
             <div class="border-t pt-8 text-center" style="border-color: rgba(212, 175, 55, 0.3);">
-                <p class="text-gray-400">&copy; 2024 Hotel Navjeevan Palace. All rights reserved. </p>
+                <p class="text-gray-400">&copy; 2024 Hotel Navjeevan Palace. All rights reserved. | Subject to Udaipur Jurisdiction Only.</p>
             </div>
         </div>
     </footer>
@@ -241,9 +241,6 @@
                             ${room.images && room.images.length > 0 ? `
                             <div class="relative overflow-hidden h-64">
                                 <img src="${imageUrl}" alt="${room.type}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" onerror="this.src='https://via.placeholder.com/400x300?text=' + encodeURIComponent('${room.type}')">
-                                <div class="absolute top-4 right-4">
-                                    <span class="badge-premium">Popular</span>
-                                </div>
                             </div>
                             ` : ''}
                             <div class="p-6">
