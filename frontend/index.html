@@ -238,11 +238,7 @@
                         
                         return `
                         <div class="room-card-premium fade-in-up">
-                            ${room.images && room.images.length > 0 ? `
-                            <div class="relative overflow-hidden h-64">
-                                <img src="${imageUrl}" alt="${room.type}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" onerror="this.src='https://via.placeholder.com/400x300?text=' + encodeURIComponent('${room.type}')">
-                            </div>
-                            ` : ''}
+                           
                             <div class="p-6">
                                 <div class="mb-4">
                                     <h3 class="text-2xl font-bold text-gray-800 mb-2">${room.type}</h3>
