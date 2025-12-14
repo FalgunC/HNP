@@ -13,7 +13,7 @@ const { sendBookingConfirmation, sendEnquiryAcknowledgment } = require('./emailS
 const testBooking = {
   booking_id: 'TEST-' + Date.now(),
   customer_name: 'Test User',
-  email: 'test@example.com', // Change this to your email for testing
+  email: 'phalgunchoudhary@gmail.com', // Change this to your email for testing
   phone: '1234567890',
   room_type: 'Deluxe Room',
   check_in: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
@@ -28,7 +28,7 @@ const testBooking = {
 const testEnquiry = {
   booking_id: 'ENQ-' + Date.now(),
   customer_name: 'Test Enquiry User',
-  email: 'test@example.com', // Change this to your email for testing
+  email: 'phalgunchoudhary@gmail.com', // Change this to your email for testing
   phone: '1234567890',
   room_type: 'Standard Room',
   check_in: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),

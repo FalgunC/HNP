@@ -1,325 +1,830 @@
+/**
+ * PRODUCTION-READY EMAIL NOTIFICATION SYSTEM
+ * 
+ * Uses Brevo (formerly Sendinblue) REST API for reliable email delivery
+ * - No SMTP port blocking issues
+ * - High deliverability (SPF/DKIM compatible)
+ * - Works reliably on Render and Netlify
+ * 
+ * Email Types:
+ * 1. User Enquiry Acknowledgment - Sent automatically when user submits enquiry
+ * 2. Booking Confirmation - Sent when admin confirms booking
+ */
+
 const brevo = require('@getbrevo/brevo');
 
-// Initialize Brevo API client
+// ============================================
+// BREVO API INITIALIZATION
+// ============================================
+
 let apiInstance = null;
 
+/**
+ * Initialize Brevo API client (singleton pattern)
+ * @returns {Object|null} Brevo API instance or null if not configured
+ */
 const initializeBrevo = () => {
   if (!process.env.BREVO_API_KEY) {
-    console.error('❌ BREVO_API_KEY is not set in environment variables');
-    console.error('💡 Please add BREVO_API_KEY to your .env file');
-    console.error('💡 Get your API key from: https://app.brevo.com/settings/keys/api');
+    console.error('❌ [EMAIL] BREVO_API_KEY is not set in environment variables');
+    console.error('💡 [EMAIL] Please add BREVO_API_KEY to your .env file');
+    console.error('💡 [EMAIL] Get your API key from: https://app.brevo.com/settings/keys/api');
     return null;
   }
 
   if (!apiInstance) {
-    const defaultClient = brevo.ApiClient.instance;
-    const apiKey = defaultClient.authentications['api-key'];
-    apiKey.apiKey = process.env.BREVO_API_KEY;
-    apiInstance = new brevo.TransactionalEmailsApi();
+    try {
+      const defaultClient = brevo.ApiClient.instance;
+      const apiKey = defaultClient.authentications['api-key'];
+      apiKey.apiKey = process.env.BREVO_API_KEY;
+      apiInstance = new brevo.TransactionalEmailsApi();
+      console.log('✅ [EMAIL] Brevo API initialized successfully');
+    } catch (error) {
+      console.error('❌ [EMAIL] Failed to initialize Brevo API:', error.message);
+      return null;
+    }
   }
   return apiInstance;
 };
 
-const formatDateSafe = (d) => {
+// ============================================
+// UTILITY FUNCTIONS
+// ============================================
+
+/**
+ * Safely format date for display
+ * @param {Date|string} date - Date to format
+ * @returns {string} Formatted date string
+ */
+const formatDateSafe = (date) => {
   try {
-    const dt = new Date(d);
+    if (!date) return 'N/A';
+    const dt = new Date(date);
     if (isNaN(dt.getTime())) return 'N/A';
-    return dt.toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    return dt.toLocaleDateString('en-IN', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
   } catch (e) {
     return 'N/A';
   }
 };
 
-// Send booking confirmation email
-const sendBookingConfirmation = async (booking) => {
+/**
+ * Validate email address
+ * @param {string} email - Email address to validate
+ * @returns {boolean} True if valid
+ */
+const isValidEmail = (email) => {
+  if (!email || typeof email !== 'string') return false;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email.trim());
+};
+
+// ============================================
+// CORE EMAIL SENDING FUNCTION
+// ============================================
+
+/**
+ * Send email via Brevo API (reusable function)
+ * @param {Object} options - Email options
+ * @param {string} options.to - Recipient email
+ * @param {string} options.subject - Email subject
+ * @param {string} options.htmlContent - HTML email content
+ * @param {string} options.textContent - Plain text content (optional)
+ * @returns {Promise<Object>} Result object with success status
+ */
+const sendEmail = async ({ to, subject, htmlContent, textContent = null }) => {
   try {
+    // Initialize API
     const api = initializeBrevo();
     if (!api) {
-      console.error('❌ Brevo API not initialized');
-      return { success: false, error: 'Email service not configured' };
+      return { 
+        success: false, 
+        error: 'Email service not configured. Please set BREVO_API_KEY in environment variables.' 
+      };
     }
 
-    // Validate email address
-    const recipientEmail = booking.email || booking.email_address;
-    if (!recipientEmail || !recipientEmail.includes('@')) {
-      console.error('❌ Invalid email address:', recipientEmail);
+    // Validate recipient email
+    if (!isValidEmail(to)) {
+      console.error(`❌ [EMAIL] Invalid recipient email: ${to}`);
       return { success: false, error: 'Invalid email address' };
     }
 
+    // Get sender configuration
     const senderEmail = process.env.BREVO_SENDER_EMAIL || process.env.EMAIL_FROM || 'noreply@hotelnavjeevanpalace.com';
     const senderName = process.env.BREVO_SENDER_NAME || 'Hotel Navjeevan Palace';
 
-    const emailContent = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <style>
-          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: #1e40af; color: white; padding: 20px; text-align: center; }
-          .content { padding: 20px; background: #f9fafb; }
-          .booking-details { background: white; padding: 15px; margin: 15px 0; border-left: 4px solid #1e40af; }
-          .detail-row { margin: 10px 0; }
-          .label { font-weight: bold; color: #555; }
-          .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <h1>Hotel Navjeevan Palace</h1>
-            <p>Booking Confirmation</p>
-          </div>
-          <div class="content">
-            <p>Dear ${booking.customer_name || booking.name || 'Guest'},</p>
-            <p>Thank you for choosing Hotel Navjeevan Palace! Your booking has been confirmed.</p>
-            
-            <div class="booking-details">
-              <h2>Booking Details</h2>
-              <div class="detail-row">
-                <span class="label">Booking ID:</span> ${booking.booking_id || 'N/A'}
-              </div>
-              <div class="detail-row">
-                <span class="label">Room Type:</span> ${booking.room_type || 'N/A'}
-              </div>
-              <div class="detail-row">
-                <span class="label">Check-in:</span> ${formatDateSafe(booking.check_in)}
-              </div>
-              <div class="detail-row">
-                <span class="label">Check-out:</span> ${formatDateSafe(booking.check_out)}
-              </div>
-              <div class="detail-row">
-                <span class="label">Number of Nights:</span> ${booking.nights || 'N/A'}
-              </div>
-              <div class="detail-row">
-                <span class="label">Guests:</span> ${booking.guests || 'N/A'}
-              </div>
-              <div class="detail-row">
-                <span class="label">Total Amount:</span> ₹${(booking.amount || 0).toLocaleString('en-IN')}
-              </div>
-              <div class="detail-row">
-                <span class="label">Payment Mode:</span> ${booking.payment_mode || 'N/A'}
-              </div>
-              <div class="detail-row">
-                <span class="label">Payment Status:</span> ${booking.payment_status || 'N/A'}
-              </div>
-            </div>
-            
-            ${booking.payment_mode === 'Bank Transfer' && booking.payment_status === 'Pending Payment' ? `
-            <div class="booking-details">
-              <h3>Bank Transfer Details</h3>
-              <p><strong>Bank Name:</strong> ${process.env.BANK_NAME || 'N/A'}</p>
-              <p><strong>Account Name:</strong> ${process.env.BANK_ACCOUNT_NAME || 'N/A'}</p>
-              <p><strong>Account Number:</strong> ${process.env.BANK_ACCOUNT_NUMBER || 'N/A'}</p>
-              <p><strong>IFSC Code:</strong> ${process.env.BANK_IFSC || 'N/A'}</p>
-              <p><strong>UPI ID:</strong> ${process.env.BANK_UPI_ID || 'N/A'}</p>
-              <p style="margin-top: 15px; color: #dc2626;"><strong>Please complete the payment and share the transaction details for confirmation.</strong></p>
-            </div>
-            ` : ''}
-            
-            <p>We look forward to welcoming you to Hotel Navjeevan Palace!</p>
-            <p>For any queries, please contact us at:</p>
-            <p>Phone: 0294-2482909 / 7230082909<br>
-            Email: navjeevanhoteludr@yahoo.com<br>
-            Address: 1, Shivaji Nagar, City Station Road, Udaipur-313001 (Raj.)</p>
-          </div>
-          <div class="footer">
-            <p>Hotel Navjeevan Palace, Udaipur</p>
-            <p>This is an automated email. Please do not reply.</p>
-          </div>
-        </div>
-      </body>
-      </html>
-    `;
+    // Validate sender email
+    if (!isValidEmail(senderEmail)) {
+      console.error(`❌ [EMAIL] Invalid sender email: ${senderEmail}`);
+      return { success: false, error: 'Invalid sender email configuration' };
+    }
 
-    // Create sendSmtpEmail object
+    // Create email payload
     const sendSmtpEmail = {
-      subject: `Booking Confirmation - ${booking.booking_id || 'N/A'}`,
-      htmlContent: emailContent,
       sender: { name: senderName, email: senderEmail },
-      to: [{ email: recipientEmail, name: booking.customer_name || booking.name || 'Guest' }]
+      to: [{ email: to.trim() }],
+      subject: subject,
+      htmlContent: htmlContent,
+      ...(textContent && { textContent: textContent })
     };
 
     // Send email via Brevo API
     const result = await api.sendTransacEmail(sendSmtpEmail);
     
-    console.log('✅ Booking confirmation email sent successfully!');
-    console.log('   Message ID:', result.messageId);
-    console.log('   To:', recipientEmail);
+    console.log(`✅ [EMAIL] Sent successfully to ${to}`);
+    console.log(`   [EMAIL] Message ID: ${result.messageId}`);
+    console.log(`   [EMAIL] Subject: ${subject}`);
     
-    return { success: true, messageId: result.messageId };
+    return { 
+      success: true, 
+      messageId: result.messageId,
+      recipient: to 
+    };
+
   } catch (error) {
-    console.error('❌ Email sending failed!');
-    console.error('   Error:', error.message);
+    // Log error but don't crash the server
+    console.error('❌ [EMAIL] Sending failed!');
+    console.error(`   [EMAIL] Error: ${error.message}`);
+    console.error(`   [EMAIL] To: ${to}`);
+    console.error(`   [EMAIL] Subject: ${subject}`);
     
-    if (error.response) {
-      console.error('   Response:', error.response.body);
+    if (error.response && error.response.body) {
+      console.error(`   [EMAIL] API Response:`, JSON.stringify(error.response.body, null, 2));
     }
-    
+
     // Provide helpful error messages
+    let errorMessage = error.message || 'Unknown error';
     if (error.message && error.message.includes('API key')) {
-      console.error('💡 Check BREVO_API_KEY in your .env file');
+      errorMessage = 'Invalid API key. Please check BREVO_API_KEY in .env file.';
     } else if (error.message && error.message.includes('sender')) {
-      console.error('💡 Verify BREVO_SENDER_EMAIL is a verified sender in Brevo dashboard');
+      errorMessage = 'Sender email not verified. Please verify sender in Brevo dashboard.';
+    } else if (error.message && error.message.includes('credit') || error.message.includes('quota')) {
+      errorMessage = 'Email quota exceeded. Please check your Brevo account limits.';
     }
-    
-    return { success: false, error: error.message };
+
+    return { 
+      success: false, 
+      error: errorMessage,
+      details: error.message 
+    };
   }
 };
 
-// Send enquiry acknowledgment email
+// ============================================
+// EMAIL TEMPLATES
+// ============================================
+
+/**
+ * Generate User Enquiry Acknowledgment Email Template
+ * @param {Object} booking - Booking/enquiry object
+ * @returns {Object} Email content with HTML and text
+ */
+const generateEnquiryAcknowledgmentEmail = (booking) => {
+  const customerName = booking.customer_name || booking.name || 'Guest';
+  const bookingId = booking.booking_id || 'N/A';
+  const roomType = booking.room_type || 'N/A';
+  const checkIn = formatDateSafe(booking.check_in);
+  const checkOut = formatDateSafe(booking.check_out);
+  const nights = booking.nights || 'N/A';
+  const guests = booking.guests || 'N/A';
+  const amount = (booking.amount || 0).toLocaleString('en-IN');
+  const paymentMode = booking.payment_mode || 'N/A';
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; 
+      line-height: 1.6; 
+      color: #333333; 
+      margin: 0; 
+      padding: 0; 
+      background-color: #f4f4f4;
+    }
+    .email-container { 
+      max-width: 600px; 
+      margin: 0 auto; 
+      background-color: #ffffff;
+    }
+    .header { 
+      background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); 
+      color: white; 
+      padding: 30px 20px; 
+      text-align: center; 
+    }
+    .header h1 { 
+      margin: 0; 
+      font-size: 24px; 
+      font-weight: 600;
+    }
+    .header p { 
+      margin: 10px 0 0 0; 
+      font-size: 14px; 
+      opacity: 0.9;
+    }
+    .content { 
+      padding: 30px 20px; 
+      background: #ffffff; 
+    }
+    .greeting {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+    .message {
+      font-size: 15px;
+      color: #555555;
+      margin-bottom: 25px;
+      line-height: 1.8;
+    }
+    .enquiry-box { 
+      background: #fff9e6; 
+      border-left: 4px solid #f59e0b; 
+      padding: 20px; 
+      margin: 25px 0; 
+      border-radius: 4px;
+    }
+    .enquiry-box h2 { 
+      margin: 0 0 15px 0; 
+      color: #92400e; 
+      font-size: 18px;
+    }
+    .detail-row { 
+      margin: 12px 0; 
+      padding: 8px 0; 
+      border-bottom: 1px solid #f3f4f6; 
+      display: flex;
+      justify-content: space-between;
+    }
+    .detail-row:last-child { 
+      border-bottom: none; 
+    }
+    .label { 
+      font-weight: 600; 
+      color: #555555; 
+      flex: 0 0 40%;
+    }
+    .value { 
+      color: #111827; 
+      text-align: right;
+      flex: 1;
+    }
+    .status-badge {
+      display: inline-block;
+      background: #fef3c7;
+      color: #92400e;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .contact-info {
+      background: #f9fafb;
+      padding: 20px;
+      border-radius: 4px;
+      margin: 25px 0;
+    }
+    .contact-info h3 {
+      margin: 0 0 12px 0;
+      font-size: 16px;
+      color: #111827;
+    }
+    .contact-info p {
+      margin: 6px 0;
+      font-size: 14px;
+      color: #555555;
+    }
+    .footer { 
+      text-align: center; 
+      padding: 25px 20px; 
+      background: #f9fafb;
+      color: #6b7280; 
+      font-size: 12px; 
+      border-top: 1px solid #e5e7eb;
+    }
+    .footer p {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <div class="header">
+      <h1>🏨 Hotel Navjeevan Palace</h1>
+      <p>Enquiry Received - We're Reviewing Your Request</p>
+    </div>
+    
+    <div class="content">
+      <div class="greeting">
+        <p>Dear <strong>${customerName}</strong>,</p>
+      </div>
+      
+      <div class="message">
+        <p>Thank you for contacting Hotel Navjeevan Palace! </p>
+        <p>We have received your room enquiry .</p>
+        <p>You will receive a <strong>confirmation email</strong> shortly once we confirm your room booking .</p>
+      </div>
+      
+      <div class="enquiry-box">
+        <h2>📋 Your Enquiry Details</h2>
+        <div class="detail-row">
+          <span class="label">Enquiry ID:</span>
+          <span class="value"><strong>${bookingId}</strong></span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Room Type:</span>
+          <span class="value">${roomType}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Check-in Date:</span>
+          <span class="value">${checkIn}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Check-out Date:</span>
+          <span class="value">${checkOut}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Number of Nights:</span>
+          <span class="value">${nights}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Number of Guests:</span>
+          <span class="value">${guests}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Total Amount:</span>
+          <span class="value"><strong style="color: #f59e0b; font-size: 16px;">₹${amount}</strong></span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Payment Mode:</span>
+          <span class="value">${paymentMode}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Status:</span>
+          <span class="value"><span class="status-badge">⏳ Pending Confirmation</span></span>
+        </div>
+      </div>
+      
+      <div class="message">
+        <p>Please keep this Enquiry ID - </p>
+        <p><strong>(${bookingId})</strong></p>
+        <p> You may need it when contacting us about your booking.</p>
+      </div>
+      
+      <div class="contact-info">
+        <h3>📞 Need Help?</h3>
+        <p><strong>Phone:</strong> 0294-2482909 / 7230082909 / 9828027795 </p>
+        <p><strong>Email:</strong> navjeevanudaipur@gmail.com</p>
+        <p><strong>Address:</strong> 1, Shivaji Nagar, City Station Road, Udaipur-313001 (Rajasthan)</p>
+      </div>
+      
+      
+    
+    <div class="footer">
+      <p><strong>Hotel Navjeevan Palace, Udaipur</strong></p>
+      <p>This is an automated email. Please do not reply to this message.</p>
+      <p>For inquiries, please contact us using the information above.</p>
+    </div>
+  </div>
+</body>
+</html>
+  `;
+
+  const textContent = `
+Dear ${customerName},
+
+Thank you for your interest in Hotel Navjeevan Palace! We have successfully received your room enquiry and our team is currently reviewing your request.
+
+ENQUIRY DETAILS:
+- Enquiry ID: ${bookingId}
+- Room Type: ${roomType}
+- Check-in: ${checkIn}
+- Check-out: ${checkOut}
+- Nights: ${nights}
+- Guests: ${guests}
+- Total Amount: ₹${amount}
+- Payment Mode: ${paymentMode}
+- Status: Pending Confirmation
+
+Please keep this Enquiry ID (${bookingId}) for your reference.
+
+CONTACT INFORMATION:
+Phone: 0294-2482909 / 7230082909
+Email: navjeevanhoteludr@yahoo.com
+Address: 1, Shivaji Nagar, City Station Road, Udaipur-313001 (Rajasthan)
+
+We look forward to welcoming you to Hotel Navjeevan Palace!
+
+---
+Hotel Navjeevan Palace, Udaipur
+This is an automated email. Please do not reply.
+  `;
+
+  return { htmlContent, textContent };
+};
+
+/**
+ * Generate Booking Confirmation Email Template
+ * @param {Object} booking - Booking object
+ * @returns {Object} Email content with HTML and text
+ */
+const generateBookingConfirmationEmail = (booking) => {
+  const customerName = booking.customer_name || booking.name || 'Guest';
+  const bookingId = booking.booking_id || 'N/A';
+  const roomType = booking.room_type || 'N/A';
+  const checkIn = formatDateSafe(booking.check_in);
+  const checkOut = formatDateSafe(booking.check_out);
+  const nights = booking.nights || 'N/A';
+  const guests = booking.guests || 'N/A';
+  const amount = (booking.amount || 0).toLocaleString('en-IN');
+  const paymentMode = booking.payment_mode || 'N/A';
+  const paymentStatus = booking.payment_status || 'N/A';
+
+  // Bank transfer details section (if applicable)
+  const bankTransferSection = (paymentMode === 'Bank Transfer' && paymentStatus === 'Pending Payment') ? `
+      <div class="enquiry-box" style="background: #fef2f2; border-left-color: #dc2626;">
+        <h2 style="color: #991b1b;">💳 Bank Transfer Details</h2>
+        <div class="detail-row">
+          <span class="label">Bank Name:</span>
+          <span class="value">${process.env.BANK_NAME || 'N/A'}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Account Name:</span>
+          <span class="value">${process.env.BANK_ACCOUNT_NAME || 'N/A'}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Account Number:</span>
+          <span class="value"><strong>${process.env.BANK_ACCOUNT_NUMBER || 'N/A'}</strong></span>
+        </div>
+        <div class="detail-row">
+          <span class="label">IFSC Code:</span>
+          <span class="value"><strong>${process.env.BANK_IFSC || 'N/A'}</strong></span>
+        </div>
+        <div class="detail-row">
+          <span class="label">UPI ID:</span>
+          <span class="value">${process.env.BANK_UPI_ID || 'N/A'}</span>
+        </div>
+        <p style="margin-top: 15px; color: #dc2626; font-weight: 600; font-size: 14px;">
+          ⚠️ Please complete the payment and share the transaction details for confirmation.
+        </p>
+      </div>
+  ` : '';
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; 
+      line-height: 1.6; 
+      color: #333333; 
+      margin: 0; 
+      padding: 0; 
+      background-color: #f4f4f4;
+    }
+    .email-container { 
+      max-width: 600px; 
+      margin: 0 auto; 
+      background-color: #ffffff;
+    }
+    .header { 
+      background: linear-gradient(135deg, #059669 0%, #10b981 100%); 
+      color: white; 
+      padding: 30px 20px; 
+      text-align: center; 
+    }
+    .header h1 { 
+      margin: 0; 
+      font-size: 24px; 
+      font-weight: 600;
+    }
+    .header p { 
+      margin: 10px 0 0 0; 
+      font-size: 14px; 
+      opacity: 0.9;
+    }
+    .success-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: 10px;
+    }
+    .content { 
+      padding: 30px 20px; 
+      background: #ffffff; 
+    }
+    .greeting {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+    .message {
+      font-size: 15px;
+      color: #555555;
+      margin-bottom: 25px;
+      line-height: 1.8;
+    }
+    .booking-box { 
+      background: #f0fdf4; 
+      border-left: 4px solid #10b981; 
+      padding: 20px; 
+      margin: 25px 0; 
+      border-radius: 4px;
+    }
+    .booking-box h2 { 
+      margin: 0 0 15px 0; 
+      color: #065f46; 
+      font-size: 18px;
+    }
+    .detail-row { 
+      margin: 12px 0; 
+      padding: 8px 0; 
+      border-bottom: 1px solid #d1fae5; 
+      display: flex;
+      justify-content: space-between;
+    }
+    .detail-row:last-child { 
+      border-bottom: none; 
+    }
+    .label { 
+      font-weight: 600; 
+      color: #555555; 
+      flex: 0 0 40%;
+    }
+    .value { 
+      color: #111827; 
+      text-align: right;
+      flex: 1;
+    }
+    .status-badge {
+      display: inline-block;
+      background: #d1fae5;
+      color: #065f46;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .contact-info {
+      background: #f9fafb;
+      padding: 20px;
+      border-radius: 4px;
+      margin: 25px 0;
+    }
+    .contact-info h3 {
+      margin: 0 0 12px 0;
+      font-size: 16px;
+      color: #111827;
+    }
+    .contact-info p {
+      margin: 6px 0;
+      font-size: 14px;
+      color: #555555;
+    }
+    .footer { 
+      text-align: center; 
+      padding: 25px 20px; 
+      background: #f9fafb;
+      color: #6b7280; 
+      font-size: 12px; 
+      border-top: 1px solid #e5e7eb;
+    }
+    .footer p {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <div class="header">
+      <h1>🏨 Hotel Navjeevan Palace</h1>
+      <p>Booking Confirmed!</p>
+      <div class="success-badge">✓ CONFIRMED</div>
+    </div>
+    
+    <div class="content">
+      <div class="greeting">
+        <p>Dear <strong>${customerName}</strong>,</p>
+      </div>
+      
+      <div class="message">
+        <p> We are delighted to inform you that your <strong>booking</strong> at <strong>Hotel Navjeevan Palace</strong> has been <strong>successfully confirmed</strong>.</p>
+        <p>We look forward to welcoming you and ensuring you have a comfortable and memorable stay with us.</p>
+      </div>
+      
+      <div class="booking-box">
+        <h2>✅ Booking Confirmation Details</h2>
+        <div class="detail-row">
+          <span class="label">Booking ID:</span>
+          <span class="value"><strong style="color: #059669; font-size: 16px;">${bookingId}</strong></span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Room Type:</span>
+          <span class="value">${roomType}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Check-in Date:</span>
+          <span class="value">${checkIn}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Check-out Date:</span>
+          <span class="value">${checkOut}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Number of Nights:</span>
+          <span class="value">${nights}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Number of Guests:</span>
+          <span class="value">${guests}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Total Amount:</span>
+          <span class="value"><strong style="color: #059669; font-size: 18px;">₹${amount}</strong></span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Payment Mode:</span>
+          <span class="value">${paymentMode}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Payment Status:</span>
+          <span class="value"><span class="status-badge">${paymentStatus}</span></span>
+        </div>
+      </div>
+      
+      ${bankTransferSection}
+      
+      <div class="message">
+        <p>Please keep this Booking ID - </p>
+        <p><strong>(${bookingId})</strong></p>
+        <p> You may need it when check-in or contacting us about your booking.</p>
+      </div>
+      
+      <div class="contact-info">
+        <h3>📞 Contact Information</h3>
+        <p><strong>Phone:</strong> 0294-2482909 / 7230082909 / 9828027795 </p>
+        <p><strong>Email:</strong> navjeevanudaipur@gmail.com</p>
+        <p><strong>Address:</strong> 1, Shivaji Nagar, City Station Road, Udaipur-313001 (Rajasthan)</p>
+      </div>
+      
+      <div class="message">
+        <p style="color: #059669; font-weight: 600;">We look forward to welcoming you to Hotel Navjeevan Palace!</p>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <p><strong>Hotel Navjeevan Palace, Udaipur</strong></p>
+      <p>This is an automated email. Please do not reply to this message.</p>
+      <p>For inquiries, please contact us using the information above.</p>
+    </div>
+  </div>
+</body>
+</html>
+  `;
+
+  const textContent = `
+Dear ${customerName},
+
+Thank you for choosing Hotel Navjeevan Palace! We are delighted to confirm that your booking has been successfully confirmed.
+
+BOOKING CONFIRMATION DETAILS:
+- Booking ID: ${bookingId}
+- Room Type: ${roomType}
+- Check-in: ${checkIn}
+- Check-out: ${checkOut}
+- Nights: ${nights}
+- Guests: ${guests}
+- Total Amount: ₹${amount}
+- Payment Mode: ${paymentMode}
+- Payment Status: ${paymentStatus}
+
+${paymentMode === 'Bank Transfer' && paymentStatus === 'Pending Payment' ? `
+BANK TRANSFER DETAILS:
+- Bank Name: ${process.env.BANK_NAME || 'N/A'}
+- Account Name: ${process.env.BANK_ACCOUNT_NAME || 'N/A'}
+- Account Number: ${process.env.BANK_ACCOUNT_NUMBER || 'N/A'}
+- IFSC Code: ${process.env.BANK_IFSC || 'N/A'}
+- UPI ID: ${process.env.BANK_UPI_ID || 'N/A'}
+
+Please complete the payment and share the transaction details for confirmation.
+` : ''}
+
+Please keep this Booking ID (${bookingId}) for your reference.
+
+CONTACT INFORMATION:
+Phone: 0294-2482909 / 7230082909
+Email: navjeevanhoteludr@yahoo.com
+Address: 1, Shivaji Nagar, City Station Road, Udaipur-313001 (Rajasthan)
+
+We look forward to welcoming you to Hotel Navjeevan Palace!
+
+---
+Hotel Navjeevan Palace, Udaipur
+This is an automated email. Please do not reply.
+  `;
+
+  return { htmlContent, textContent };
+};
+
+// ============================================
+// PUBLIC EMAIL FUNCTIONS
+// ============================================
+
+/**
+ * Send User Enquiry Acknowledgment Email
+ * Triggered: Automatically when user submits an enquiry/booking request
+ * 
+ * @param {Object} booking - Booking/enquiry object
+ * @returns {Promise<Object>} Result object with success status
+ */
 const sendEnquiryAcknowledgment = async (booking) => {
   try {
-    const api = initializeBrevo();
-    if (!api) {
-      console.error('❌ Brevo API not initialized');
-      return { success: false, error: 'Email service not configured' };
+    // Validate booking object
+    if (!booking || !booking.email) {
+      console.error('❌ [EMAIL] Invalid booking object for enquiry acknowledgment');
+      return { success: false, error: 'Invalid booking data' };
     }
 
-    // Validate email address
-    const recipientEmail = booking.email || booking.email_address;
-    if (!recipientEmail || !recipientEmail.includes('@')) {
-      console.error('❌ Invalid email address:', recipientEmail);
-      return { success: false, error: 'Invalid email address' };
-    }
+    // Generate email content
+    const { htmlContent, textContent } = generateEnquiryAcknowledgmentEmail(booking);
+    const subject = `Enquiry Received - ${booking.booking_id || 'N/A'} - Hotel Navjeevan Palace`;
 
-    const senderEmail = process.env.BREVO_SENDER_EMAIL || process.env.EMAIL_FROM || 'noreply@hotelnavjeevanpalace.com';
-    const senderName = process.env.BREVO_SENDER_NAME || 'Hotel Navjeevan Palace';
+    // Send email
+    const result = await sendEmail({
+      to: booking.email,
+      subject: subject,
+      htmlContent: htmlContent,
+      textContent: textContent
+    });
 
-    const emailContent = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <style>
-          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%); color: white; padding: 30px; text-align: center; }
-          .content { padding: 30px; background: #f9fafb; }
-          .enquiry-details { background: white; padding: 20px; margin: 20px 0; border-left: 4px solid #D4AF37; border-radius: 5px; }
-          .detail-row { margin: 12px 0; padding: 8px 0; border-bottom: 1px solid #eee; }
-          .detail-row:last-child { border-bottom: none; }
-          .label { font-weight: bold; color: #555; display: inline-block; width: 150px; }
-          .value { color: #333; }
-          .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
-          .thank-you { background: #fff3cd; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #D4AF37; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <h1 style="margin: 0; font-size: 28px;">🏨 Hotel Navjeevan Palace</h1>
-            <p style="margin: 10px 0 0 0; font-size: 16px;">Enquiry Received</p>
-          </div>
-          <div class="content">
-            <p>Dear <strong>${booking.customer_name || booking.name || 'Guest'}</strong>,</p>
-            
-            <div class="thank-you">
-              <p style="margin: 0; font-size: 16px; color: #856404;">
-                <strong>Thank you for your consideration!</strong> We have received your room enquiry and will confirm your booking shortly.
-              </p>
-            </div>
-            
-            <div class="enquiry-details">
-              <h2 style="margin-top: 0; color: #D4AF37;">Enquiry Details</h2>
-              <div class="detail-row">
-                <span class="label">Enquiry ID:</span>
-                <span class="value"><strong>${booking.booking_id || 'N/A'}</strong></span>
-              </div>
-              <div class="detail-row">
-                <span class="label">Room Type:</span>
-                <span class="value">${booking.room_type || 'N/A'}</span>
-              </div>
-              <div class="detail-row">
-                <span class="label">Check-in:</span>
-                <span class="value">${formatDateSafe(booking.check_in)}</span>
-              </div>
-              <div class="detail-row">
-                <span class="label">Check-out:</span>
-                <span class="value">${formatDateSafe(booking.check_out)}</span>
-              </div>
-              <div class="detail-row">
-                <span class="label">Number of Nights:</span>
-                <span class="value">${booking.nights || 'N/A'}</span>
-              </div>
-              <div class="detail-row">
-                <span class="label">Guests:</span>
-                <span class="value">${booking.guests || 'N/A'}</span>
-              </div>
-              <div class="detail-row">
-                <span class="label">Total Amount:</span>
-                <span class="value"><strong style="color: #D4AF37; font-size: 18px;">₹${(booking.amount || 0).toLocaleString('en-IN')}</strong></span>
-              </div>
-              <div class="detail-row">
-                <span class="label">Payment Mode:</span>
-                <span class="value">${booking.payment_mode || 'N/A'}</span>
-              </div>
-              <div class="detail-row">
-                <span class="label">Status:</span>
-                <span class="value" style="color: #856404; font-weight: bold;">⏳ Pending Confirmation</span>
-              </div>
-            </div>
-            
-            <p style="margin-top: 25px; font-size: 15px; line-height: 1.8;">
-              Our team is reviewing your enquiry and will send you a <strong>confirmation email and SMS</strong> shortly. 
-              Please keep this enquiry ID (<strong>${booking.booking_id || 'N/A'}</strong>) for your reference.
-            </p>
-            
-            <p style="margin-top: 20px;">
-              For any urgent queries, please contact us at:<br>
-              <strong>Phone:</strong> 0294-2482909 / 7230082909<br>
-              <strong>Email:</strong> navjeevanhoteludr@yahoo.com<br>
-              <strong>Address:</strong> 1, Shivaji Nagar, City Station Road, Udaipur-313001 (Raj.)
-            </p>
-            
-            <p style="margin-top: 25px; color: #666; font-style: italic;">
-              We look forward to welcoming you to Hotel Navjeevan Palace!
-            </p>
-          </div>
-          <div class="footer">
-            <p><strong>Hotel Navjeevan Palace, Udaipur</strong></p>
-            <p>This is an automated email. Please do not reply.</p>
-          </div>
-        </div>
-      </body>
-      </html>
-    `;
+    return result;
 
-    // Create sendSmtpEmail object
-    const sendSmtpEmail = {
-      subject: `Enquiry Received - ${booking.booking_id || 'N/A'} - Hotel Navjeevan Palace`,
-      htmlContent: emailContent,
-      sender: { name: senderName, email: senderEmail },
-      to: [{ email: recipientEmail, name: booking.customer_name || booking.name || 'Guest' }]
-    };
-
-    // Send email via Brevo API
-    const result = await api.sendTransacEmail(sendSmtpEmail);
-    
-    console.log('✅ Enquiry acknowledgment email sent successfully!');
-    console.log('   Message ID:', result.messageId);
-    console.log('   To:', recipientEmail);
-    
-    return { success: true, messageId: result.messageId };
   } catch (error) {
-    console.error('❌ Email sending failed!');
-    console.error('   Error:', error.message);
-    
-    if (error.response) {
-      console.error('   Response:', error.response.body);
-    }
-    
-    // Provide helpful error messages
-    if (error.message && error.message.includes('API key')) {
-      console.error('💡 Check BREVO_API_KEY in your .env file');
-    } else if (error.message && error.message.includes('sender')) {
-      console.error('💡 Verify BREVO_SENDER_EMAIL is a verified sender in Brevo dashboard');
-    }
-    
-    return { success: false, error: error.message };
+    // Don't crash the server - log and return error
+    console.error('❌ [EMAIL] Error in sendEnquiryAcknowledgment:', error.message);
+    return { 
+      success: false, 
+      error: error.message || 'Failed to send enquiry acknowledgment email' 
+    };
   }
 };
 
+/**
+ * Send Booking Confirmation Email
+ * Triggered: When admin confirms a booking from admin panel
+ * 
+ * @param {Object} booking - Booking object
+ * @returns {Promise<Object>} Result object with success status
+ */
+const sendBookingConfirmation = async (booking) => {
+  try {
+    // Validate booking object
+    if (!booking || !booking.email) {
+      console.error('❌ [EMAIL] Invalid booking object for confirmation');
+      return { success: false, error: 'Invalid booking data' };
+    }
+
+    // Generate email content
+    const { htmlContent, textContent } = generateBookingConfirmationEmail(booking);
+    const subject = `Booking Confirmed - ${booking.booking_id || 'N/A'} - Hotel Navjeevan Palace`;
+
+    // Send email
+    const result = await sendEmail({
+      to: booking.email,
+      subject: subject,
+      htmlContent: htmlContent,
+      textContent: textContent
+    });
+
+    return result;
+
+  } catch (error) {
+    // Don't crash the server - log and return error
+    console.error('❌ [EMAIL] Error in sendBookingConfirmation:', error.message);
+    return { 
+      success: false, 
+      error: error.message || 'Failed to send booking confirmation email' 
+    };
+  }
+};
+
+// ============================================
+// EXPORTS
+// ============================================
+
 module.exports = {
-  sendBookingConfirmation,
-  sendEnquiryAcknowledgment
+  sendEmail,                    // Core reusable function
+  sendEnquiryAcknowledgment,   // User enquiry email (automatic)
+  sendBookingConfirmation       // Admin confirmation email
 };
