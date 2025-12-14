@@ -121,11 +121,7 @@
                         return `
                         <div class="room-card-premium fade-in-up">
                             <div class="md:flex">
-                                ${room.images && room.images.length > 0 ? `
-                                <div class="md:w-2/5 relative overflow-hidden">
-                                    <img src="${imageUrl}" alt="${room.type}" class="w-full h-80 md:h-full object-cover transition-transform duration-700 hover:scale-110" onerror="this.src='https://via.placeholder.com/600x400?text=' + encodeURIComponent('${room.type}')">
-                                </div>
-                                ` : ''}
+                                
                                 <div class="${room.images && room.images.length > 0 ? 'md:w-1/3' : 'md:w-1/3'} p-8 flex flex-col justify-center relative" style="background: linear-gradient(135deg, #1a1a2e 0%, #2C2C2C 100%);">
                                     <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-gold to-transparent" style="background: linear-gradient(90deg, transparent, #D4AF37, transparent);"></div>
                                     <h2 class="text-3xl font-bold mb-4 text-gold">${room.type}</h2>
