@@ -94,7 +94,7 @@
                     <% if (booking.booking_status === 'Enquiry') { %>
                     <button onclick="confirmEnquiry('<%= booking._id %>')" 
                             class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition font-bold">
-                        <i class="fas fa-check-circle mr-2"></i>Confirm Enquiry (Send Email & SMS)
+                        <i class="fas fa-check-circle mr-2"></i>Confirm Enquiry (Send Email)
                     </button>
                     <% } %>
                     
@@ -132,7 +132,7 @@
 
     <script>
         async function confirmEnquiry(bookingId) {
-            if (!confirm('Confirm this enquiry?\n\nThis will:\n✓ Change status to Confirmed\n✓ Send confirmation EMAIL instantly\n✓ Send confirmation SMS instantly')) return;
+            if (!confirm('Confirm this enquiry?\n\nThis will:\n✓ Change status to Confirmed\n✓ Send confirmation EMAIL instantly')) return;
             
             const button = event.target;
             button.disabled = true;
@@ -147,18 +147,17 @@
                 const data = await response.json();
                 if (data.success) {
                     alert('✅ Enquiry Confirmed!\n\n📧 Email: ' + (data.emailSent ? 'Sent ✓' : 'Failed ✗') + 
-                          '\n📱 SMS: ' + (data.smsSent ? 'Sent ✓' : 'Failed ✗') + 
-                          '\n\nConfirmation notifications have been sent to the customer.');
+                          '\n\nConfirmation email has been sent to the customer.');
                     location.reload();
                 } else {
                     alert('❌ Error: ' + data.error);
                     button.disabled = false;
-                    button.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Confirm Enquiry (Send Email & SMS)';
+                    button.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Confirm Enquiry (Send Email)';
                 }
             } catch (error) {
                 alert('❌ Error confirming enquiry: ' + error.message);
                 button.disabled = false;
-                button.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Confirm Enquiry (Send Email & SMS)';
+                    button.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Confirm Enquiry (Send Email)';
             }
         }
 

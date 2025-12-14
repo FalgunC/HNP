@@ -1,23 +1,15 @@
-# Brevo Email & SMS API Setup Guide
+# Brevo Email API Setup Guide
 
-This project uses **Brevo** (formerly Sendinblue) for sending transactional emails and SMS. Brevo provides a reliable REST API for sending both emails and SMS without SMTP configuration.
+This project uses **Brevo** (formerly Sendinblue) for sending transactional emails. Brevo provides a reliable REST API for sending emails without SMTP configuration.
 
 ## Why Brevo?
 
-### Email
 - ✅ No SMTP configuration needed
 - ✅ More reliable than SMTP
 - ✅ Better deliverability
 - ✅ Free tier: 300 emails/day
 - ✅ Easy API integration
 - ✅ Email tracking and analytics
-
-### SMS
-- ✅ Same API key for both email and SMS
-- ✅ Reliable SMS delivery
-- ✅ Pay-as-you-go pricing
-- ✅ Easy integration
-- ✅ SMS tracking and analytics
 
 ## Setup Steps
 
@@ -43,15 +35,7 @@ This project uses **Brevo** (formerly Sendinblue) for sending transactional emai
 4. Verify the email address by clicking the verification link sent to your email
 5. Wait for approval (usually instant for verified emails)
 
-### 4. Configure SMS Sender (for SMS)
-
-1. Go to **SMS** → **Senders** in Brevo dashboard
-2. Click **Add a sender**
-3. Enter your sender name (e.g., `NAVJEE` or `NAVJEEVAN`)
-4. Note: Sender name must be 3-11 characters, alphanumeric only
-5. Wait for approval (usually instant)
-
-### 5. Configure Environment Variables
+### 4. Configure Environment Variables
 
 1. Copy `env.example` to `.env`:
    ```bash
@@ -63,11 +47,9 @@ This project uses **Brevo** (formerly Sendinblue) for sending transactional emai
    BREVO_API_KEY=xkeysib-your-api-key-here
    BREVO_SENDER_EMAIL=noreply@hotelnavjeevanpalace.com
    BREVO_SENDER_NAME=Hotel Navjeevan Palace
-   SMS_PROVIDER=brevo
-   BREVO_SMS_SENDER=NAVJEE
    ```
 
-### 6. Install Dependencies
+### 5. Install Dependencies
 
 ```bash
 npm install
@@ -75,21 +57,14 @@ npm install
 
 This will install `@getbrevo/brevo` package automatically.
 
-### 7. Test Email & SMS Sending
+### 6. Test Email Sending
 
-**Test Email:**
 ```bash
 node utils/testBrevoEmail.js
 ```
 
-**Test SMS:**
-```bash
-node utils/testBrevoSMS.js
-```
-
-The services will automatically initialize when the server starts. Check the console logs for:
+The email service will automatically initialize when the server starts. Check the console logs for:
 - ✅ `Email sent successfully!` (when emails are sent)
-- ✅ `SMS sent successfully!` (when SMS are sent)
 
 ## Troubleshooting
 
@@ -114,37 +89,23 @@ The services will automatically initialize when the server starts. Check the con
 3. Check Brevo dashboard → Statistics for email status
 4. Ensure sender email is verified and approved
 
-## Email & SMS Templates
+## Email Templates
 
-### Email Templates
 The system sends two types of emails:
 
 1. **Booking Confirmation** - Sent when a booking is confirmed
 2. **Enquiry Acknowledgment** - Sent when an enquiry is received
 
-Both emails are HTML formatted with professional styling.
-
-### SMS Templates
-The system sends two types of SMS:
-
-1. **Booking Confirmation SMS** - Sent when a booking is confirmed
-2. **Enquiry Acknowledgment SMS** - Sent when an enquiry is received
-
-SMS messages are concise and include booking ID, dates, and amount.
+Both emails are HTML formatted with professional styling and include plain text fallback.
 
 ## Free Tier Limits
 
-### Email
 - **300 emails/day** (free tier)
 - **Unlimited contacts**
 - **Email tracking**
 - **No credit card required**
 
-### SMS
-- **Pay-as-you-go pricing**
-- **Check pricing**: [Brevo SMS Pricing](https://www.brevo.com/pricing/)
-- **SMS credits** can be purchased as needed
-- **No monthly commitment**
+For production use with higher volume, consider upgrading to a paid plan.
 
 For production use with higher volume, consider upgrading to a paid plan.
 

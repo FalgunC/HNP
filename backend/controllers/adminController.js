@@ -2,7 +2,6 @@ const AdminUser = require('../models/AdminUser');
 const Booking = require('../models/Booking');
 const Room = require('../models/Room');
 const { sendBookingConfirmation } = require('../utils/emailService');
-const { sendBookingConfirmationSMS } = require('../utils/smsService');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const path = require('path');
 const fs = require('fs');
@@ -257,39 +256,41 @@ const confirmPayment = async (req, res) => {
     // Populate room details
     await booking.populate('room_id');
 
-    // Send confirmation notifications (non-blocking, production-safe)
-    Promise.allSettled([
-      (async () => {
-        try {
-          console.log(`📧 [ADMIN] Sending confirmation email to: ${booking.email}`);
-          const emailResult = await sendBookingConfirmation(booking);
-          if (emailResult.success) {
-            console.log(`✅ [ADMIN] Confirmation email sent successfully (ID: ${emailResult.messageId || 'N/A'})`);
-          } else {
-            console.error(`❌ [ADMIN] Confirmation email failed: ${emailResult.error}`);
-          }
-        } catch (error) {
-          console.error(`❌ [ADMIN] Confirmation email error: ${error.message}`);
+    // Convert booking to plain object
+    const bookingData = {
+      booking_id: booking.booking_id,
+      customer_name: booking.customer_name,
+      email: booking.email,
+      phone: booking.phone,
+      room_type: booking.room_type,
+      check_in: booking.check_in,
+      check_out: booking.check_out,
+      nights: booking.nights,
+      guests: booking.guests,
+      amount: booking.amount,
+      payment_mode: booking.payment_mode,
+      payment_status: booking.payment_status,
+      booking_status: booking.booking_status
+    };
+
+    // Send confirmation email (non-blocking, production-safe)
+    (async () => {
+      try {
+        console.log(`📧 [ADMIN] Sending confirmation email to: ${bookingData.email}`);
+        const emailResult = await sendBookingConfirmation(bookingData);
+        if (emailResult && emailResult.success) {
+          console.log(`✅ [ADMIN] Confirmation email sent successfully (ID: ${emailResult.messageId || 'N/A'})`);
+        } else {
+          console.error(`❌ [ADMIN] Confirmation email failed: ${emailResult?.error || 'Unknown error'}`);
         }
-      })(),
-      (async () => {
-        try {
-          console.log(`📱 [ADMIN] Sending confirmation SMS to: ${booking.phone}`);
-          const smsResult = await sendBookingConfirmationSMS(booking);
-          if (smsResult.success) {
-            console.log(`✅ [ADMIN] Confirmation SMS sent successfully (ID: ${smsResult.messageId || 'N/A'})`);
-          } else {
-            console.error(`❌ [ADMIN] Confirmation SMS failed: ${smsResult.error}`);
-          }
-        } catch (error) {
-          console.error(`❌ [ADMIN] Confirmation SMS error: ${error.message}`);
-        }
-      })()
-    ]).catch(error => {
-      console.error(`❌ [ADMIN] Notification system error: ${error.message}`);
+      } catch (error) {
+        console.error(`❌ [ADMIN] Confirmation email error: ${error.message}`);
+      }
+    })().catch(error => {
+      console.error(`❌ [ADMIN] Email notification error: ${error.message}`);
     });
 
-    res.json({ success: true, message: 'Payment confirmed and notifications sent' });
+    res.json({ success: true, message: 'Payment confirmed and confirmation email sent' });
   } catch (error) {
     console.error('Confirm payment error:', error);
     res.status(500).json({ error: 'Failed to confirm payment' });
@@ -337,9 +338,8 @@ const confirmEnquiry = async (req, res) => {
       booking_status: booking.booking_status
     };
 
-    // Send confirmation notifications (production-ready with proper error handling)
+    // Send confirmation email (production-ready with proper error handling)
     let emailResult = { success: false, error: null };
-    let smsResult = { success: false, error: null };
 
     try {
       console.log(`📧 [ADMIN] Sending confirmation email to: ${bookingData.email}`);
@@ -363,34 +363,12 @@ const confirmEnquiry = async (req, res) => {
       emailResult = { success: false, error: error.message };
     }
 
-    try {
-      console.log(`📱 [ADMIN] Sending confirmation SMS to: ${bookingData.phone}`);
-      if (!bookingData.phone || bookingData.phone.length < 10) {
-        console.error(`❌ [ADMIN] Invalid phone number: ${bookingData.phone}`);
-        smsResult = { success: false, error: 'Invalid phone number' };
-      } else {
-        smsResult = await sendBookingConfirmationSMS(bookingData);
-        if (smsResult && smsResult.success) {
-          console.log(`✅ [ADMIN] Confirmation SMS sent successfully (ID: ${smsResult.messageId || 'N/A'})`);
-        } else {
-          console.error(`❌ [ADMIN] Confirmation SMS failed: ${smsResult?.error || 'Unknown error'}`);
-          smsResult = { success: false, error: smsResult?.error || 'Unknown error' };
-        }
-      }
-    } catch (error) {
-      console.error(`❌ [ADMIN] Confirmation SMS error: ${error.message}`);
-      console.error(`❌ [ADMIN] Error stack: ${error.stack}`);
-      smsResult = { success: false, error: error.message };
-    }
-
-    // Always return success even if notifications fail (booking is confirmed)
+    // Always return success even if email fails (booking is confirmed)
     res.json({ 
       success: true, 
-      message: 'Enquiry confirmed! Confirmation email and SMS sent to customer.',
+      message: 'Enquiry confirmed! Confirmation email sent to customer.',
       emailSent: emailResult.success,
-      smsSent: smsResult.success,
-      emailError: emailResult.success ? null : emailResult.error,
-      smsError: smsResult.success ? null : smsResult.error
+      emailError: emailResult.success ? null : emailResult.error
     });
   } catch (error) {
     console.error('Confirm enquiry error:', error);

@@ -192,6 +192,8 @@ const generateEnquiryAcknowledgmentEmail = (booking) => {
   const guests = booking.guests || 'N/A';
   const amount = (booking.amount || 0).toLocaleString('en-IN');
   const paymentMode = booking.payment_mode || 'N/A';
+  // For Pay at Hotel, payment status must always be "Pay at Hotel"
+  const paymentStatus = paymentMode === 'Pay at Hotel' ? 'Pay at Hotel' : (booking.payment_status || 'Pending Payment');
 
   const htmlContent = `
 <!DOCTYPE html>
@@ -366,6 +368,10 @@ const generateEnquiryAcknowledgmentEmail = (booking) => {
           <span class="value">${paymentMode}</span>
         </div>
         <div class="detail-row">
+          <span class="label">Payment Status:</span>
+          <span class="value">${paymentStatus}</span>
+        </div>
+        <div class="detail-row">
           <span class="label">Status:</span>
           <span class="value"><span class="status-badge">⏳ Pending Confirmation</span></span>
         </div>
@@ -390,6 +396,10 @@ const generateEnquiryAcknowledgmentEmail = (booking) => {
       <p><strong>Hotel Navjeevan Palace, Udaipur</strong></p>
       <p>This is an automated email. Please do not reply to this message.</p>
       <p>For inquiries, please contact us using the information above.</p>
+      <p style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 11px; text-align: center;">
+        © 2024 Hotel Navjeevan Palace. All rights reserved.<br>
+        Subject to Udaipur Jurisdiction Only
+      </p>
     </div>
   </div>
 </body>
@@ -410,6 +420,7 @@ ENQUIRY DETAILS:
 - Guests: ${guests}
 - Total Amount: ₹${amount}
 - Payment Mode: ${paymentMode}
+- Payment Status: ${paymentStatus}
 - Status: Pending Confirmation
 
 Please keep this Enquiry ID (${bookingId}) for your reference.
@@ -444,10 +455,11 @@ const generateBookingConfirmationEmail = (booking) => {
   const guests = booking.guests || 'N/A';
   const amount = (booking.amount || 0).toLocaleString('en-IN');
   const paymentMode = booking.payment_mode || 'N/A';
-  const paymentStatus = booking.payment_status || 'N/A';
+  // For Pay at Hotel, payment status must always be "Pay at Hotel"
+  const paymentStatus = paymentMode === 'Pay at Hotel' ? 'Pay at Hotel' : (booking.payment_status || 'Pending Payment');
 
-  // Bank transfer details section (if applicable)
-  const bankTransferSection = (paymentMode === 'Bank Transfer' && paymentStatus === 'Pending Payment') ? `
+  // Bank transfer details section (if applicable - for Pay Online/Bank Transfer)
+  const bankTransferSection = (paymentMode === 'Bank Transfer' || paymentMode === 'Pay Online') ? `
       <div class="enquiry-box" style="background: #fef2f2; border-left-color: #dc2626;">
         <h2 style="color: #991b1b;">💳 Bank Transfer Details</h2>
         <div class="detail-row">
@@ -472,6 +484,10 @@ const generateBookingConfirmationEmail = (booking) => {
         </div>
         <p style="margin-top: 15px; color: #dc2626; font-weight: 600; font-size: 14px;">
           ⚠️ Please complete the payment and share the transaction details for confirmation.
+        </p>
+        <p style="margin-top: 15px; color: #dc2626; font-weight: 600; font-size: 14px; background: #fef2f2; padding: 12px; border-radius: 4px;">
+          📱 <strong>Please share the payment screenshot on the following number:</strong><br>
+          <strong style="font-size: 16px;">7230082909</strong>
         </p>
       </div>
   ` : '';
@@ -687,6 +703,10 @@ const generateBookingConfirmationEmail = (booking) => {
       <p><strong>Hotel Navjeevan Palace, Udaipur</strong></p>
       <p>This is an automated email. Please do not reply to this message.</p>
       <p>For inquiries, please contact us using the information above.</p>
+      <p style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 11px; text-align: center;">
+        © 2024 Hotel Navjeevan Palace. All rights reserved.<br>
+        Subject to Udaipur Jurisdiction Only
+      </p>
     </div>
   </div>
 </body>
@@ -709,7 +729,7 @@ BOOKING CONFIRMATION DETAILS:
 - Payment Mode: ${paymentMode}
 - Payment Status: ${paymentStatus}
 
-${paymentMode === 'Bank Transfer' && paymentStatus === 'Pending Payment' ? `
+${(paymentMode === 'Bank Transfer' || paymentMode === 'Pay Online') ? `
 BANK TRANSFER DETAILS:
 - Bank Name: ${process.env.BANK_NAME || 'N/A'}
 - Account Name: ${process.env.BANK_ACCOUNT_NAME || 'N/A'}
@@ -718,6 +738,7 @@ BANK TRANSFER DETAILS:
 - UPI ID: ${process.env.BANK_UPI_ID || 'N/A'}
 
 Please complete the payment and share the transaction details for confirmation.
+Please share the payment screenshot on the following number: 7230082909
 ` : ''}
 
 Please keep this Booking ID (${bookingId}) for your reference.
@@ -730,8 +751,8 @@ Address: 1, Shivaji Nagar, City Station Road, Udaipur-313001 (Rajasthan)
 We look forward to welcoming you to Hotel Navjeevan Palace!
 
 ---
-Hotel Navjeevan Palace, Udaipur
-This is an automated email. Please do not reply.
+© 2024 Hotel Navjeevan Palace. All rights reserved.
+Subject to Udaipur Jurisdiction Only
   `;
 
   return { htmlContent, textContent };

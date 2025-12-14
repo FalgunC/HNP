@@ -2,7 +2,6 @@ const Booking = require('../models/Booking');
 const Room = require('../models/Room');
 const generateBookingId = require('../utils/generateBookingId');
 const { sendEnquiryAcknowledgment } = require('../utils/emailService');
-const { sendEnquiryAcknowledgmentSMS } = require('../utils/smsService');
 
 // Create new booking
 const createBooking = async (req, res) => {
@@ -79,7 +78,7 @@ const createBooking = async (req, res) => {
     // Populate room details for response
     await booking.populate('room_id');
 
-    // Send enquiry acknowledgment notifications (non-blocking, production-safe)
+    // Send enquiry acknowledgment email (non-blocking, production-safe)
     // This runs asynchronously and won't block the API response
     // Convert booking to plain object to ensure all fields are available
     const bookingData = {
@@ -98,53 +97,36 @@ const createBooking = async (req, res) => {
       booking_status: booking.booking_status
     };
 
-    Promise.allSettled([
-      (async () => {
-        try {
-          console.log(`📧 [BOOKING] Sending enquiry acknowledgment email to: ${bookingData.email}`);
-          console.log(`📧 [BOOKING] Booking ID: ${bookingData.booking_id}`);
-          
-          if (!bookingData.email || !bookingData.email.includes('@')) {
-            console.error(`❌ [BOOKING] Invalid email address: ${bookingData.email}`);
-            return;
-          }
+    // Send enquiry acknowledgment email
+    (async () => {
+      try {
+        console.log(`📧 [BOOKING] Sending enquiry acknowledgment email to: ${bookingData.email}`);
+        console.log(`📧 [BOOKING] Booking ID: ${bookingData.booking_id}`);
+        
+        if (!bookingData.email || !bookingData.email.includes('@')) {
+          console.error(`❌ [BOOKING] Invalid email address: ${bookingData.email}`);
+          return;
+        }
 
-          const emailResult = await sendEnquiryAcknowledgment(bookingData);
-          if (emailResult && emailResult.success) {
-            console.log(`✅ [BOOKING] Enquiry email sent successfully (ID: ${emailResult.messageId || 'N/A'})`);
-          } else {
-            console.error(`❌ [BOOKING] Enquiry email failed: ${emailResult?.error || 'Unknown error'}`);
-          }
-        } catch (error) {
-          console.error(`❌ [BOOKING] Enquiry email error: ${error.message}`);
-          console.error(`❌ [BOOKING] Error stack: ${error.stack}`);
+        const emailResult = await sendEnquiryAcknowledgment(bookingData);
+        if (emailResult && emailResult.success) {
+          console.log(`✅ [BOOKING] Enquiry email sent successfully (ID: ${emailResult.messageId || 'N/A'})`);
+        } else {
+          console.error(`❌ [BOOKING] Enquiry email failed: ${emailResult?.error || 'Unknown error'}`);
         }
-      })(),
-      (async () => {
-        try {
-          console.log(`📱 [BOOKING] Sending enquiry acknowledgment SMS to: ${bookingData.phone}`);
-          const smsResult = await sendEnquiryAcknowledgmentSMS(bookingData);
-          if (smsResult && smsResult.success) {
-            console.log(`✅ [BOOKING] Enquiry SMS sent successfully (ID: ${smsResult.messageId || 'N/A'})`);
-          } else {
-            console.error(`❌ [BOOKING] Enquiry SMS failed: ${smsResult?.error || 'Unknown error'}`);
-          }
-        } catch (error) {
-          console.error(`❌ [BOOKING] Enquiry SMS error: ${error.message}`);
-          console.error(`❌ [BOOKING] Error stack: ${error.stack}`);
-        }
-      })()
-    ]).catch(error => {
-      // This catch is for the Promise.allSettled itself (should never happen)
-      console.error(`❌ [BOOKING] Notification system error: ${error.message}`);
-      console.error(`❌ [BOOKING] Error stack: ${error.stack}`);
+      } catch (error) {
+        console.error(`❌ [BOOKING] Enquiry email error: ${error.message}`);
+        console.error(`❌ [BOOKING] Error stack: ${error.stack}`);
+      }
+    })().catch(error => {
+      console.error(`❌ [BOOKING] Email notification error: ${error.message}`);
     });
 
 
 
     res.status(201).json({
       success: true,
-      message: 'Enquiry submitted successfully. You will receive an acknowledgment email and SMS shortly. Confirmation will be sent after review.',
+      message: 'Enquiry submitted successfully. You will receive an acknowledgment email shortly. Confirmation will be sent after review.',
       booking: {
         booking_id: booking.booking_id,
         customer_name: booking.customer_name,
