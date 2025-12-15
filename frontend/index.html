@@ -79,6 +79,17 @@
             color: #D4AF37;
             text-decoration: underline;
         }
+        .price-flicker {
+            color: #D4AF37;
+            text-shadow: 0 0 8px rgba(212, 175, 55, 0.55);
+            animation: flickerGlow 2.8s ease-in-out infinite;
+        }
+        @keyframes flickerGlow {
+            0%, 100% { opacity: 1; filter: drop-shadow(0 0 6px rgba(212, 175, 55, 0.35)); }
+            45% { opacity: 0.85; filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.6)); }
+            60% { opacity: 1; filter: drop-shadow(0 0 14px rgba(212, 175, 55, 0.8)); }
+            75% { opacity: 0.9; filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.5)); }
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50" style="background: linear-gradient(135deg, #FFFEF7 0%, #F5F5DC 100%);">
@@ -127,7 +138,7 @@
                 Welcome to <span class="text-gold">Hotel Navjeevan Palace</span>
             </h2>
             <p class="text-2xl md:text-3xl mb-4 font-light" style="color: #F4D03F;">Your Comfortable Stay in the City of Udaipur</p>
-            <p class="text-lg mb-10 text-gray-300 max-w-2xl mx-auto">Comfortable Stays at Affordable Prices</p>
+            <p class="text-lg mb-10 text-gray-300 max-w-2xl mx-auto">Comfortable Stays at Affordable Prices at just <span class="price-flicker font-bold">₹651</span></p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <a href="booking.html" class="btn-premium text-lg px-10 py-4 interactive-hover">
                     <i class="fas fa-calendar-check mr-2"></i>Book Your Room Now
@@ -161,7 +172,7 @@
                         <i class="fas fa-rupee-sign"></i>
                     </div>
                     <h3 class="text-2xl font-bold mb-4 text-gray-800">Budget-Friendly</h3>
-                    <p class="text-gray-600 leading-relaxed">Affordable rates starting from <span class="text-gold font-bold">₹999</span> per night.</p>
+                    <p class="text-gray-600 leading-relaxed">Affordable rates starting from <span class="price-flicker font-bold">₹651</span> per night.</p>
                 </div>
                 <div class="card-premium text-center p-8 interactive-hover">
                     <div class="feature-icon-premium mx-auto mb-6">

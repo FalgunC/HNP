@@ -114,6 +114,32 @@
         .gallery-dot.active {
             background: #D4AF37;
         }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+        @media (min-width: 768px) {
+            .gallery-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+        @media (min-width: 1024px) {
+            .gallery-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+        }
+        .gallery-grid img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 12px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .gallery-grid img:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50" style="background: linear-gradient(135deg, #FFFEF7 0%, #F5F5DC 100%);">
@@ -193,6 +219,19 @@
                 <div class="gallery-dot" onclick="goToSlide(1)"></div>
                 <div class="gallery-dot" onclick="goToSlide(2)"></div>
                 <div class="gallery-dot" onclick="goToSlide(3)"></div>
+            </div>
+            <div class="mt-12">
+                <div class="gallery-grid">
+                    <img src="assets/gallery/hotel-room-1.jpg" alt="Hotel Navjeevan Palace room photo 1">
+                    <img src="assets/gallery/hotel-room-2.jpg" alt="Hotel Navjeevan Palace room photo 2">
+                    <img src="assets/gallery/hotel-room-3.jpg" alt="Hotel Navjeevan Palace room photo 3">
+                    <img src="assets/gallery/hotel-room-4.jpg" alt="Hotel Navjeevan Palace room photo 4">
+                    <img src="assets/gallery/hotel-room-5.jpg" alt="Hotel Navjeevan Palace room photo 5">
+                    <img src="assets/gallery/hotel-room-6.jpg" alt="Hotel Navjeevan Palace room photo 6">
+                    <img src="assets/gallery/hotel-room-7.jpg" alt="Hotel Navjeevan Palace room photo 7">
+                    <img src="assets/gallery/hotel-room-8.jpg" alt="Hotel Navjeevan Palace room photo 8">
+                    <img src="assets/gallery/hotel-room-9.jpg" alt="Hotel Navjeevan Palace room photo 9">
+                </div>
             </div>
         </div>
     </section>
