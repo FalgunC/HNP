@@ -38,13 +38,23 @@ const seedData = async () => {
     }
 
     // Seed Rooms
-    const rooms = [
+    const rooms = [   
+      {
+        name: 'Pocket Friendly',
+        type: 'Pocket Friendly',
+        price: 651,
+        description: 'Simple, clean, and affordable stay for short visits.',
+        amenities: [ 'TV', 'Cooler', 'Attached Bathroom', 'Hot Water','Room Service'],
+        maxGuests: 2,
+        images: ['/images/ordinary-basic.jpg'],
+        isActive: true
+      },
       {
         name: 'Ordinary / Basic Room',
         type: 'Ordinary / Basic Room',
         price: 999,
         description: 'Clean and simple room. Best for budget travelers at affordable rates.',
-        amenities: [ 'TV', 'Cooler', 'Attached Bathroom', 'Room Service'],
+        amenities: [ 'Air cooled', 'TV', 'Attached Bathroom', 'Hot Water', 'Room Service'],
         maxGuests: 2,
         images: ['/images/ordinary-basic.jpg'],
         isActive: true
