@@ -12,7 +12,7 @@ const allowedOrigins = [
   process.env.FRONTEND_URL,
   'http://localhost:8888',
   'http://localhost:3000',
-  'https://hotelnavjeevanpalace.netlify.app',
+  'https://www.hotelnavjeevanpalace.com',
   // Add your Netlify URL here
   process.env.NETLIFY_URL
 ].filter(Boolean);

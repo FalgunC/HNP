@@ -5,3 +5,15 @@
 [build.environment]
   NODE_VERSION = "18"
 
+[[redirects]]
+  from = "http://hotelnavjeevanpalace.com/*"
+  to = "https://hotelnavjeevanpalace.com/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.hotelnavjeevanpalace.com/*"
+  to = "https://hotelnavjeevanpalace.com/:splat"
+  status = 301
+  force = true
+

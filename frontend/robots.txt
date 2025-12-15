@@ -1,5 +1,5 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://hotelnavjeevanpalace.netlify.app/sitemap.xml
+Sitemap: https://hotelnavjeevanpalace.com/sitemap.xml
 
