@@ -1,7 +1,7 @@
 const AdminUser = require('../models/AdminUser');
 const Booking = require('../models/Booking');
 const Room = require('../models/Room');
-const { sendBookingConfirmation } = require('../utils/emailService');
+const { sendBookingConfirmation, sendBookingCancelled } = require('../utils/emailService');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const path = require('path');
 const fs = require('fs');
@@ -62,7 +62,9 @@ const logout = (req, res) => {
 // Dashboard
 const dashboard = async (req, res) => {
   try {
-    const today = new Date();
+    // Use server-side Asia/Kolkata timezone for "today"
+    const indiaNowStr = new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
+    const today = new Date(indiaNowStr);
     today.setHours(0, 0, 0, 0);
 
     // Get statistics
@@ -201,6 +203,35 @@ const viewBookings = async (req, res) => {
   }
 };
 
+// Delete a single booking (permanent)
+const deleteBooking = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const booking = await Booking.findById(id);
+    if (!booking) return res.status(404).json({ error: 'Booking not found' });
+
+    await Booking.deleteOne({ _id: id });
+    console.log(`🔴 Booking deleted: ${booking.booking_id}`);
+
+    res.json({ success: true, message: 'Booking deleted permanently' });
+  } catch (error) {
+    console.error('Delete booking error:', error);
+    res.status(500).json({ error: 'Failed to delete booking' });
+  }
+};
+
+// Clear all bookings (permanent) - use with caution
+const clearAllBookings = async (req, res) => {
+  try {
+    await Booking.deleteMany({});
+    console.log('🔴 All bookings cleared by admin');
+    res.json({ success: true, message: 'All bookings deleted' });
+  } catch (error) {
+    console.error('Clear all bookings error:', error);
+    res.status(500).json({ error: 'Failed to clear bookings' });
+  }
+};
+
 // View single booking
 const viewBooking = async (req, res) => {
   try {
@@ -231,6 +262,29 @@ const updateBookingStatus = async (req, res) => {
 
     booking.booking_status = booking_status;
     await booking.save();
+
+    // If booking is cancelled by admin, send cancellation email (non-blocking)
+    if (booking_status === 'Cancelled') {
+      (async () => {
+        try {
+          await booking.populate('room_id');
+          console.log(`📧 [ADMIN] Sending cancellation email to: ${booking.email}`);
+          const emailResult = await sendBookingCancelled({
+            booking_id: booking.booking_id,
+            customer_name: booking.customer_name,
+            email: booking.email,
+            phone: booking.phone
+          });
+          if (emailResult && emailResult.success) {
+            console.log(`✅ [ADMIN] Cancellation email sent (ID: ${emailResult.messageId || 'N/A'})`);
+          } else {
+            console.error(`❌ [ADMIN] Cancellation email failed: ${emailResult?.error || 'Unknown error'}`);
+          }
+        } catch (err) {
+          console.error(`❌ [ADMIN] Cancellation email error: ${err.message}`);
+        }
+      })().catch(err => { console.error('❌ [ADMIN] Email task failed:', err); });
+    }
 
     res.json({ success: true, message: 'Booking status updated' });
   } catch (error) {
@@ -445,7 +499,7 @@ const exportBookings = async (req, res) => {
       payment_mode: booking.payment_mode,
       payment_status: booking.payment_status,
       booking_status: booking.booking_status,
-      created_at: booking.createdAt.toLocaleDateString('en-IN')
+      created_at: booking.createdAt.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
     }));
 
     await csvWriter.writeRecords(records);
@@ -476,6 +530,8 @@ module.exports = {
   updateBookingStatus,
   confirmPayment,
   confirmEnquiry,
-  exportBookings
+  exportBookings,
+  deleteBooking,
+  clearAllBookings
 };
 

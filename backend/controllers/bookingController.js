@@ -73,6 +73,8 @@ const createBooking = async (req, res) => {
       booking_status: 'Enquiry'
     });
 
+    // Ensure server-side timestamp is used for booking creation
+    booking.createdAt = new Date();
     await booking.save();
 
     // Populate room details for response

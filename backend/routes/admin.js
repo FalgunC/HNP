@@ -21,6 +21,9 @@ router.get('/bookings/:id', isAuthenticated, adminController.viewBooking);
 router.put('/bookings/:id/status', isAuthenticated, adminController.updateBookingStatus);
 router.put('/bookings/:id/confirm-payment', isAuthenticated, adminController.confirmPayment);
 router.put('/bookings/:id/confirm-enquiry', isAuthenticated, adminController.confirmEnquiry);
+// Delete booking(s)
+router.delete('/bookings/:id', isAuthenticated, adminController.deleteBooking);
+router.delete('/bookings', isAuthenticated, adminController.clearAllBookings);
 
 // Export
 router.get('/export', isAuthenticated, adminController.exportBookings);

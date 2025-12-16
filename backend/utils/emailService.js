@@ -901,6 +901,91 @@ const sendBookingConfirmation = async (booking) => {
   }
 };
 
+/**
+ * Generate Booking Cancelled Email Template
+ * @param {Object} booking
+ * @returns {Object} Email content
+ */
+const generateBookingCancelledEmail = (booking) => {
+  const customerName = booking.customer_name || 'Guest';
+  const bookingId = booking.booking_id || 'N/A';
+  const cancelledAt = formatDateSafe(new Date());
+  const contactPhone = '0294-2482909 / 7230082909';
+  const contactEmail = process.env.CONTACT_EMAIL || 'navjeevanudaipur@gmail.com';
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;background:#f4f4f4;color:#333}
+    .card{max-width:600px;margin:20px auto;background:#fff;padding:20px;border-radius:6px}
+    .header{background:#ef4444;color:#fff;padding:16px;border-radius:6px 6px 0 0;text-align:center}
+    .content{padding:16px}
+    .footer{font-size:12px;color:#666;padding-top:12px}
+    .detail{background:#f9fafb;padding:12px;border-radius:4px;margin:12px 0}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="header"><h2>Booking Cancelled - Hotel Navjeevan Palace</h2></div>
+    <div class="content">
+      <p>Dear <strong>${customerName}</strong>,</p>
+      <p>We regret to inform you that your booking has been <strong>cancelled</strong>.</p>
+
+      <div class="detail">
+        <p><strong>Booking ID:</strong> ${bookingId}</p>
+        <p><strong>Guest Name:</strong> ${customerName}</p>
+        <p><strong>Cancelled At:</strong> ${cancelledAt}</p>
+      </div>
+
+      <p>If you have any questions, please contact us:</p>
+      <p><strong>Phone:</strong> ${contactPhone}</p>
+      <p><strong>Email:</strong> ${contactEmail}</p>
+
+      <div class="footer">
+        <p>This is an automated message from Hotel Navjeevan Palace. Please do not reply to this email.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+  `;
+
+  const textContent = `Dear ${customerName},\n\nYour booking (${bookingId}) has been cancelled on ${cancelledAt}.\nIf you have questions contact ${contactPhone} or ${contactEmail}.\n\nHotel Navjeevan Palace`;
+
+  return { htmlContent, textContent };
+};
+
+/**
+ * Send Booking Cancelled Email
+ */
+const sendBookingCancelled = async (booking) => {
+  try {
+    if (!booking || !booking.email) {
+      console.error('❌ [EMAIL] Invalid booking object for cancellation email');
+      return { success: false, error: 'Invalid booking data' };
+    }
+
+    const { htmlContent, textContent } = generateBookingCancelledEmail(booking);
+    const subject = `Booking Cancelled - ${booking.booking_id || 'N/A'} - Hotel Navjeevan Palace`;
+
+    const result = await sendEmail({
+      to: booking.email,
+      subject,
+      htmlContent,
+      textContent
+    });
+
+    return result;
+  } catch (error) {
+    console.error('❌ [EMAIL] Error in sendBookingCancelled:', error.message);
+    return { success: false, error: error.message || 'Failed to send cancellation email' };
+  }
+};
+
 // ============================================
 // EXPORTS
 // ============================================
@@ -908,5 +993,6 @@ const sendBookingConfirmation = async (booking) => {
 module.exports = {
   sendEmail,                    // Core reusable function
   sendEnquiryAcknowledgment,   // User enquiry email (automatic)
-  sendBookingConfirmation       // Admin confirmation email
+  sendBookingConfirmation,      // Admin confirmation email
+  sendBookingCancelled          // Admin cancellation email
 };

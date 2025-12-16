@@ -83,7 +83,7 @@
                 <div class="space-y-2">
                     <p><span class="font-semibold">Payment Mode:</span> <%= booking.payment_mode %></p>
                     <p><span class="font-semibold">Payment Status:</span> <%= booking.payment_status %></p>
-                    <p><span class="font-semibold">Booking Date:</span> <%= new Date(booking.createdAt).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) %></p>
+                        <p><span class="font-semibold">Booking Date:</span> <%= new Date(booking.createdAt).toLocaleString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Kolkata' }) %></p>
                 </div>
             </div>
 
